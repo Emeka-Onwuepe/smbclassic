@@ -4,8 +4,8 @@ class Customer:
                  total_credit:float=0.00,
                  total_payment:float=0.00,
                  balance:float=0.00,
-                 customer_id:int = 0,
-                 *args, **kwargs):
+                 customer_id:int = 0
+                 ):
         self.name = name
         self.phone_number = phone_number
         self.email = email

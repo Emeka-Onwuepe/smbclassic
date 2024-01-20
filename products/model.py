@@ -1,7 +1,7 @@
 class Category:
     def __init__(self, name:str,
-                 category_id:int = 0,
-                 *args, **kwargs):
+                 category_id:int = 0
+                 ):
         self.name = name 
         self.category_id = category_id
          
@@ -42,7 +42,7 @@ class Product_Type:
                  category_id:int,
                  p_group:str,
                  product_type_id:int = 0,
-                 *args, **kwargs):
+                 ):
         self.name = name 
         self.category_id = category_id
         self.p_group = p_group
@@ -89,8 +89,8 @@ class Size:
                  age_group:str,
                  gender:str,
                  price:float=0.0,
-                 size_id:int = 0,
-                 *args, **kwargs):
+                 size_id:int = 0
+                 ):
         self.size = size 
         self.product_type_id = product_type_id
         self.age_group = age_group
@@ -141,8 +141,8 @@ class Product_Class:
                  brand:str,
                  description:str,
                  color:str,gender:str,
-                 age_group:str,
-                 *args, **kwargs):
+                 age_group:str
+                 ):
         self.type = type
         self.brand = brand
         self.description = description
@@ -163,12 +163,12 @@ class Product(Product_Class):
                  color:str,gender:str,
                  age_group:str,
                  product_type_id:int,
-                 product_id:int =0,
-                 *args, **kwargs):
+                 product_id:int =0
+                 ):
         
         super().__init__(type,brand,description,
-                          color,gender,age_group,
-                          *args, **kwargs) 
+                          color,gender,age_group
+                          ) 
         self.product_type_id = product_type_id
         self.product_id = product_id
         
@@ -211,6 +211,21 @@ class Product(Product_Class):
                               @product_type_id,@product_id)''',self.__dict__)
         con.commit()
         
+    def add_m2m(self,con,size_id):
+        cursor = con.cursor()
+        m2m = cursor.execute('''SELECT * FROM product_sizes
+                                     WHERE product_id = @product_id
+                                     and size_id = @size_id
+                                   ''',{'product_id':self.product_id,
+                                        'size_id':size_id})
+        m2m = m2m.fetchone()
+        if not m2m:
+            cursor.execute(f'''INSERT INTO product_sizes 
+                          VALUES(@product_id,@size_id)''',{'product_id':self.product_id,
+                                        'size_id':size_id})
+        con.commit()        
+    
+        
         
 class Suit(Product_Class):    
     def __init__(self,type:str,brand:str,
@@ -222,12 +237,12 @@ class Suit(Product_Class):
                  button:str,
                  pics:str,
                  golden_button:str,
-                 suit_id:int =0,
-                 *args, **kwargs):
+                 suit_id:int =0
+                 ):
         
         super().__init__(type,brand,description,
-                          color,gender,age_group,
-                          *args, **kwargs) 
+                          color,gender,age_group
+                          ) 
         self.product_type_id = product_type_id
         self.breasted = breasted
         self.button = button
@@ -269,14 +284,28 @@ class Suit(Product_Class):
     
     def add_instance(self,con):
         cursor = con.cursor()
-        size = self.get_instance(cursor,self.size)
+        size = self.get_instance(cursor,self.suit_id)
         if not size:
-            cursor.execute(f'''INSERT INTO size 
+            cursor.execute(f'''INSERT INTO suit 
                           VALUES({Product_Class.add_str}
                               @product_type_id,
                               @breasted,@button,@pics,
                               @golden_button,
                               @suit_id)''',self.__dict__)
+        con.commit() 
+    
+    def add_m2m(self,con,size_id):
+        cursor = con.cursor()
+        m2m = cursor.execute('''SELECT * FROM suit_sizes
+                                     WHERE suit_id = @suit_id
+                                     and size_id = @size_id
+                                   ''',{'suit_id':self.suit_id,
+                                        'size_id':size_id})
+        m2m = m2m.fetchone()
+        if not m2m:
+            cursor.execute(f'''INSERT INTO suit_sizes 
+                          VALUES(@suit_id,@size_id)''',{'suit_id':self.suit_id,
+                                        'size_id':size_id})
         con.commit()        
     
    
@@ -287,12 +316,12 @@ class Top(Product_Class):
                  age_group:str,
                  product_type_id:int,
                  sleeves:str,
-                 top_id:int =0,
-                 *args, **kwargs):
+                 top_id:int =0
+                 ):
         
         super().__init__(type,brand,description,
-                          color,gender,age_group,
-                          *args, **kwargs) 
+                          color,gender,age_group
+                          ) 
         self.product_type_id = product_type_id
         self.sleeves = sleeves
         self.top_id = top_id
@@ -337,7 +366,21 @@ class Top(Product_Class):
                               @product_type_id,
                               @sleeves,
                               @top_id)''',self.__dict__)
-        con.commit()    
+        con.commit()   
+        
+    def add_m2m(self,con,size_id):
+            cursor = con.cursor()
+            m2m = cursor.execute('''SELECT * FROM top_sizes
+                                        WHERE top_id = @top_id
+                                        and size_id = @size_id
+                                    ''',{'top_id':self.top_id,
+                                            'size_id':size_id})
+            m2m = m2m.fetchone()
+            if not m2m:
+                cursor.execute(f'''INSERT INTO top_sizes 
+                            VALUES(@top_id,@size_id)''',{'top_id':self.top_id,
+                                                            'size_id':size_id})
+            con.commit()       
 
 class Foot_Wear(Product_Class):    
     def __init__(self,type:str,brand:str,
@@ -346,12 +389,12 @@ class Foot_Wear(Product_Class):
                  age_group:str,
                  product_type_id:int,
                  sole_color:str,
-                 foot_wear_id:int =0,
-                 *args, **kwargs):
+                 foot_wear_id:int =0
+                 ):
         
         super().__init__(type,brand,description,
-                          color,gender,age_group,
-                          *args, **kwargs) 
+                          color,gender,age_group
+                          ) 
         self.product_type_id = product_type_id
         self.sole_color = sole_color
         self.foot_wear_id = foot_wear_id
@@ -396,4 +439,18 @@ class Foot_Wear(Product_Class):
                               @product_type_id,
                               @sole_color,
                               @foot_wear_id)''',self.__dict__)
+        con.commit()  
+        
+    def add_m2m(self,con,size_id):
+        cursor = con.cursor()
+        m2m = cursor.execute('''SELECT * FROM foot_wear_sizes
+                                        WHERE foot_wear_id = @foot_wear_id
+                                        and size_id = @size_id
+                                    ''',{'foot_wear_id':self.foot_wear_id,
+                                            'size_id':size_id})
+        m2m = m2m.fetchone()
+        if not m2m:
+            cursor.execute(f'''INSERT INTO foot_wear_sizes 
+                            VALUES(@foot_wear_id,@size_id)''',{'foot_wear_id':self.foot_wear_id,
+                                                                'size_id':size_id})
         con.commit()   

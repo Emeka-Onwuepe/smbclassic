@@ -9,8 +9,8 @@ class Items:
                  expected_price:float,
                  p_group:str,
                  prduct_type:str,
-                 items_id:int = 0,
-                 *args, **kwargs):
+                 items_id:int = 0
+                 ):
        
         self.product_id = product_id
         self.suit_id = suit_id
@@ -89,8 +89,8 @@ class Sales:
                  date:str,purchase_id:str,
                  paid:bool,branch:int,
                  prduct_type:str,
-                 sales_id:int = 0,
-                 *args, **kwargs):
+                 sales_id:int = 0
+                 ):
        
         self.customer_id = customer_id
         self.total_amount = total_amount

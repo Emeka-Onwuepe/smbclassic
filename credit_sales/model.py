@@ -1,14 +1,13 @@
 class Credit_Sales:
     def __init__(self, 
-                
                  customer_id:int,total_amount:float,
                  total_payment:float,balance:float,
                  expected_price:float,remark:str,
                  channel:str,payment_method:str,
                  date:str,purchase_id:str,
                  fully_paid:bool,branch:int,
-                 credit_sales_id:int = 0,
-                 *args, **kwargs):
+                 credit_sales_id:int = 0
+                 ):
        
         self.customer_id = customer_id
         self.total_amount = total_amount
@@ -87,8 +86,8 @@ class Payment:
     def __init__(self, 
                 
                  credit_sales_id:int, amount:float,
-                 date:str, payment_id:int = 0,
-                 *args, **kwargs):
+                 date:str, payment_id:int = 0
+                 ):
        
         self.credit_sales_id = credit_sales_id
         self.amount = amount
