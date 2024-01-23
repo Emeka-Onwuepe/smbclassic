@@ -2,27 +2,41 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import connection
-from customer.models import Customer
+from products.views.getProduct import GetProductForm
+from qurried.models import Querried_Product_Class
+from qurried.views.queried_suits import Suit_Treeview
+from sales.view.sales import Sales_Detail
 from state import read_json
 
-branch = read_json('state.json','branch')
-print(branch)
+querried = {'suit':[]}
 
-    
-customer = Customer('Emeka Onwu','080090900','pppp','fff')
-customer.add_instance(connection.con)
-
-customer = Customer('james','0800900','pppp','fff')
-customer.add_instance(connection.con)
-r_customer = Customer.get_instance(connection.cur,"0800900")
-print(r_customer)
-app = tk.Tk()
+app = ttk.Window(themename='journal',)
 app.title('SMBClassic Sale and Stock App')
+# app.iconbitmap('logo.png')
+# app.iconphoto('logo.png')
+# app.geometry('1400x1000')
 
-# b1 = ttk.Button(app, text="Button 1", bootstyle=SUCCESS)
-# b1.pack(side=LEFT, padx=5, pady=10)
+main_frame = ttk.Frame(app,borderwidth=5)
+main_frame.pack()
 
-# b2 = ttk.Button(app, text="Button 2", bootstyle=(INFO, OUTLINE))
-# b2.pack(side=LEFT, padx=5, pady=10)
+get_product_frame = ttk.Frame(main_frame,borderwidth=10,padding=65,style='light')
+# get_product_frame.pack()
+
+
+customer_frame = ttk.Frame(main_frame,borderwidth=10,style='light')
+# customer_frame.pack()
+
+suit_tree = Suit_Treeview(app)
+form = GetProductForm(get_product_frame,connection.cur,suit_tree)
+Sales_Detail(customer_frame,connection.cur)
+# GetProductForm(customer_frame)
+# def check():
+#     read_json()
+    
+# check_button =  ttk.Button(main_frame,text='Check',
+#                                           command = check,
+#                                     bootstyle=SUCCESS)
+
+
 
 app.mainloop()

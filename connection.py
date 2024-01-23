@@ -1,6 +1,9 @@
 import sqlite3
 import requests
 from credit_sales.model import Credit_Sales, Payment
+from state import read_json
+branch = read_json('state.json','branch')
+
 
 from customer.models import Customer
 from products.model import (Category, Foot_Wear, 
@@ -28,29 +31,32 @@ models = {'category':Category,
 
 base = 'http://127.0.0.1:8000/'
 
-for key,model_ in  models.items():
-    url = f'{base}api/getall?model={key}'
+try:
+    for key,model_ in  models.items():
+        url = f'{base}api/getall?model={key}'
 
-    re = requests.get(url)
-    m2m = []
-    data = re.json()
-    for item in data['data']:
-     
-        item[f'{key}_id'] = item.pop('id')
-        if key == 'product_type':
-            item['category_id'] = item.pop('category')
-        elif key == 'size':
-            item['product_type_id'] = item.pop('product_type')
-        elif key in ['product','suit','top','foot_wear']:
-            item['product_type_id'] = item.pop('product_type')
-            # for size in item['sizes']:  
-            m2m = item.pop('sizes')
-            
-        instance  = model_(**item)
-        instance.add_instance(con)
+        re = requests.get(url)
+        m2m = []
+        data = re.json()
+        for item in data['data']:
         
-        for size_id in m2m:
-            instance.add_m2m(con,size_id)
+            item[f'{key}_id'] = item.pop('id')
+            if key == 'product_type':
+                item['category_id'] = item.pop('category')
+            elif key == 'size':
+                item['product_type_id'] = item.pop('product_type')
+            elif key in ['product','suit','top','foot_wear']:
+                item['product_type_id'] = item.pop('product_type')
+                # for size in item['sizes']:  
+                m2m = item.pop('sizes')
+                
+            instance  = model_(**item)
+            instance.add_instance(con)
+            
+            for size_id in m2m:
+                instance.add_m2m(con,size_id)
+except requests.exceptions.ConnectionError:
+    print('error')
     
 
 # try:

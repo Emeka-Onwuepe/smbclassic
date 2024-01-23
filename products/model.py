@@ -124,7 +124,8 @@ class Size:
         
     def add_instance(self,con):
         cursor = con.cursor()
-        size = self.get_instance(cursor,self.size)
+        size = self.get_instance(cursor,self.size_id)
+        print(size)
         if not size:
             cursor.execute('''INSERT INTO size 
                           VALUES(@size,@product_type_id,@age_group,
@@ -155,6 +156,38 @@ class Product_Class:
                 'gender VARCHAR(10),age_group VARCHAR(10), ')
     
     add_str = ('@type,@brand,@description,@color,@gender,@age_group, ')
+    
+    @staticmethod
+    def get_product(cursor,pgroup,data): 
+        product = cursor.execute(f'''
+                SELECT products.* ,
+                size.price,size.size
+                FROM (SELECT product.*, product_type.name,
+                {pgroup}_sizes.size_id,category.name
+                FROM {pgroup} as product
+                JOIN product_type
+                ON product.product_type_id = product_type.product_type_id
+                JOIN {pgroup}_sizes
+                ON {pgroup}_sizes.{pgroup}_id = product.{pgroup}_id
+                JOIN category
+                ON category.category_id = product_type.category_id
+                WHERE product.type = @type and
+                product.brand = @brand  and
+                product.color = @color and
+                product.gender = @gender and
+                product.age_group = @age_group and
+                product_type.name = @product_type) as products
+                JOIN size
+                ON size.size_id = products.size_id
+                                   ''',data)
+        product = product.fetchall()
+        
+        if product:
+            
+            product = product
+        else:
+            product = None
+        return product
                       
 
 class Product(Product_Class):    
