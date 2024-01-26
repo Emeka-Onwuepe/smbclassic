@@ -7,7 +7,7 @@ from products.views.getProduct import GetProductForm
 from qurried.views.queried_suits import Suit_Treeview
 from sales.view.sales import Sales_Detail
 from ttkbootstrap.scrolled import ScrolledFrame
-from state import read_json
+# from state import read_json
 
 querried = {'suit':[]}
 
@@ -31,6 +31,13 @@ main_frame.pack()
 
 frame_1 = ttkb.Frame(main_frame,borderwidth=10,)
 frame_1.pack()
+total_details = ttkb.Frame(frame_1)
+total_details.pack(side=BOTTOM)
+ttkb.Label(total_details,text="Grand Total:").pack(side=LEFT)
+grand_total = ttkb.Label(total_details,text="0")
+grand_total.pack(side=LEFT)
+suit_cart = Suit_Cart_Treeview(frame_1,grand_total)
+
 frame_2 = ttkb.Frame(main_frame,borderwidth=10)
 frame_2.pack()
 frame_3 = ttkb.Frame(main_frame,borderwidth=10)
@@ -46,7 +53,10 @@ get_product_frame = ttkb.LabelFrame(frame_2,borderwidth=10,padding=65,text="Get 
 sales_frame = ttkb.LabelFrame(frame_2,borderwidth=10,text='Record Sale')
 # customer_frame.pack()
 
-suit_cart = Suit_Cart_Treeview(frame_1)
+
+
+
+
 suit_tree = Suit_Treeview(frame_3)
 form = GetProductForm(get_product_frame,connection.cur,suit_tree)
 Sales_Detail(sales_frame,connection.cur)

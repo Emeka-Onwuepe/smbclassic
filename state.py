@@ -30,3 +30,13 @@ def write_json(data,name,key=None):
     data = json.dumps(data)
     with open(file_location,'w') as outfile:
         outfile.write(data)
+
+def update_total(pgroup,total):
+    grand_toatl = 0
+    totals = read_json('state.json','cart_totals')
+    totals[pgroup] = total
+    for key,value in totals.items():
+        grand_toatl += value
+    write_json(totals,'state.json','cart_totals')
+    return grand_toatl
+    

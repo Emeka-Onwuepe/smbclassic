@@ -2,11 +2,17 @@ import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
+from state import update_total
+
+
+
+
 class Suit_Cart_Treeview:
     add_to_cart = None
 
-    def __init__(self,frame):
+    def __init__(self,frame,grand_total):
         self.frame = frame
+        self.grand_total = grand_total
         suit_frame = ttkb.LabelFrame(self.frame,width=1360,text='Suits Cart')
         suit_frame.pack()
      
@@ -49,7 +55,7 @@ class Suit_Cart_Treeview:
     def get_selected(self,e):
         id = self.tree.focus()
         values = self.tree.item(id,'values') 
-        price = values[-2]
+        price = values[-4]
         qty = values[-3]
         self.qty_value.set(qty)
         self.price_value.set(price)
@@ -62,6 +68,10 @@ class Suit_Cart_Treeview:
             item = [*item[:-4],*item[-3:-1],price,1,price,item[-1]]
             self.tree.insert('',END,values=item,iid=item[-1])
             
+        self.cal_total()
+            
+        
+            
     def update_data(self):
         id = self.tree.focus()
         values = self.tree.item(id,'values') 
@@ -70,12 +80,25 @@ class Suit_Cart_Treeview:
         qty = self.qty_input.get()
         qty = int(qty)
         item = [*values[:-4],price,qty,price*qty,values[-1]]
-        print(item)
         self.tree.item(id,text="",values=item)
+        self.qty_value.set(0)
+        self.price_value.set(0)
+        self.cal_total()
 
     def delete_from_cart(self):
         for record in self.tree.selection():
             self.tree.delete(record)
         self.qty_value.set(0)
         self.price_value.set(0)
+        
+        self.cal_total()
+        
+    def cal_total(self):
+        suit_total = 0
+        ids = self.tree.get_children()
+        for id in ids:
+            values = self.tree.item(id,'values')
+            suit_total += float(values[-2])
+        grand_total = update_total('suit',suit_total)
+        self.grand_total.config(text=grand_total)
         
