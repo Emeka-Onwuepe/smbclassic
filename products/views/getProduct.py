@@ -1,5 +1,5 @@
 import tkinter as tk
-import ttkbootstrap as ttk
+import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from products.model import Product_Class
 from qurried.models import Querried_Foot_Wear, Querried_Product, Querried_Product_Class, Querried_Suit, Querried_Top
@@ -24,41 +24,39 @@ models = {
 class GetProductForm:
 
     def __init__(self,frame,cursor,suit_tree,*args, **kwargs):
-        # frame = ttk.Frame(app,borderwidth=10,style='light')
+        # frame = ttkb.Frame(app,borderwidth=10,style='light')
         frame.grid(row=0,column=0,pady=10,padx=5)
         self.cursor = cursor
         self.suit_tree = suit_tree
-        ttk.Label(frame,text='Get Product',background='#FAFAFA',
-                  font=("Arial",18,'bold')).grid(row= 0,column=0,columnspan=2)
-        pgroup_label = ttk.Label(frame,text="P_Group",background='#FAFAFA').grid(row=1,column=0,pady=5,padx=5)
-        self.pgroup = ttk.Combobox(frame,values=pgroup_,width=40)
+        pgroup_label = ttkb.Label(frame,text="P_Group").grid(row=1,column=0,pady=5,padx=5)
+        self.pgroup = ttkb.Combobox(frame,values=pgroup_,width=40)
         self.pgroup.grid(row=1,column=1,pady=5,padx=5)
         
-        gender_label = ttk.Label(frame,text="Gender",background='#FAFAFA').grid(row=2,column=0,pady=5,padx=5)
-        self.gender = ttk.Combobox(frame,values=gender_,width=40)
+        gender_label = ttkb.Label(frame,text="Gender").grid(row=2,column=0,pady=5,padx=5)
+        self.gender = ttkb.Combobox(frame,values=gender_,width=40)
         self.gender.grid(row=2,column=1,pady=5,padx=5)
         
-        age_group_label = ttk.Label(frame,text="Age_Group",background='#FAFAFA').grid(row=3,column=0,pady=5,padx=5)
-        self.age_group = ttk.Combobox(frame,values=age_group_,width=40)
+        age_group_label = ttkb.Label(frame,text="Age_Group").grid(row=3,column=0,pady=5,padx=5)
+        self.age_group = ttkb.Combobox(frame,values=age_group_,width=40)
         self.age_group.grid(row=3,column=1,pady=5,padx=5)
         
-        product_type_label = ttk.Label(frame,text="Product_Type",background='#FAFAFA').grid(row=4,column=0,pady=5,padx=5)
-        self.product_type = ttk.Entry(frame,width=40)
+        product_type_label = ttkb.Label(frame,text="Product_Type").grid(row=4,column=0,pady=5,padx=5)
+        self.product_type = ttkb.Entry(frame,width=40)
         self.product_type.grid(row=4,column=1,pady=5,padx=5)
         
-        brand_label = ttk.Label(frame,text="Brand",background='#FAFAFA').grid(row=5,column=0,pady=5,padx=5)
-        self.brand = ttk.Entry(frame,width=40)
+        brand_label = ttkb.Label(frame,text="Brand").grid(row=5,column=0,pady=5,padx=5)
+        self.brand = ttkb.Entry(frame,width=40)
         self.brand.grid(row=5,column=1,pady=5,padx=5)
         
-        type_label = ttk.Label(frame,text="Type",background='#FAFAFA').grid(row=6,column=0,pady=5,padx=5)
-        self.type = ttk.Entry(frame,width=40)
+        type_label = ttkb.Label(frame,text="Type").grid(row=6,column=0,pady=5,padx=5)
+        self.type = ttkb.Entry(frame,width=40)
         self.type.grid(row=6,column=1,pady=5,padx=5)
         
-        color_label = ttk.Label(frame,text="Color",background='#FAFAFA').grid(row=7,column=0,pady=5,padx=5)
-        self.color = ttk.Entry(frame,width=40)
+        color_label = ttkb.Label(frame,text="Color").grid(row=7,column=0,pady=5,padx=5)
+        self.color = ttkb.Entry(frame,width=40)
         self.color.grid(row=7,column=1,pady=5,padx=5)
         
-        get_product_button =  ttk.Button(frame,text='Get Product',
+        get_product_button =  ttkb.Button(frame,text='Get Product',
                                           command = self.get_product,
                                           bootstyle=SUCCESS).grid(row=8,column=0,columnspan=2,pady=5,padx=5)
  
