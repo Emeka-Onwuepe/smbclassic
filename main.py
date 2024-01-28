@@ -21,53 +21,51 @@ app.title('SMBClassic Sale and Stock App')
 # scroll.pack(side='right',fill='y')
 
 # main frame
-main_frame = ScrolledFrame(app,borderwidth=5,height=830,width=1400)
+
+main_frame = ScrolledFrame(app,height=830,width=1400)
 main_frame.pack()
+nav = ttkb.Frame(main_frame)
+nav.pack()
+ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack()
+ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack()
+wrapper = ttkb.Frame(main_frame)
+wrapper = ttkb.Frame(main_frame)
 
-# scroll.config()
+wrapper.pack()
 
-
-# structure
-
-frame_1 = ttkb.Frame(main_frame,borderwidth=10,)
-frame_1.pack()
-total_details = ttkb.Frame(frame_1)
-total_details.pack(side=BOTTOM)
-ttkb.Label(total_details,text="Grand Total:").pack(side=LEFT)
-grand_total = ttkb.Label(total_details,text="0")
-grand_total.pack(side=LEFT)
-suit_cart = Suit_Cart_Treeview(frame_1,grand_total)
-
-frame_2 = ttkb.Frame(main_frame,borderwidth=10)
-frame_2.pack()
-frame_3 = ttkb.Frame(main_frame,borderwidth=10)
-frame_3.pack()
-# frame_1 = ttkb.Frame(app,borderwidth=10)
-
-
-
-get_product_frame = ttkb.LabelFrame(frame_2,borderwidth=10,padding=65,text="Get Product")
-# get_product_frame.pack()
-
-
-sales_frame = ttkb.LabelFrame(frame_2,borderwidth=10,text='Record Sale')
-# customer_frame.pack()
-
-
-
-
-
-suit_tree = Suit_Treeview(frame_3)
-form = GetProductForm(get_product_frame,connection.cur,suit_tree)
-Sales_Detail(sales_frame,connection.cur)
-# GetProductForm(customer_frame)
-# def check():
-#     read_json()
+def summaryPage():
     
-# check_button =  ttkb.Button(main_frame,text='Check',
-#                                           command = check,
-#                                     bootstyle=SUCCESS)
+    for fn in wrapper.winfo_children():
+        fn.destroy()
+    app.update()
+        
+    ttkb.Label(wrapper,text='Sales Summary').pack()
+    
 
 
-
+def mainPage():
+     
+    for fn in wrapper.winfo_children():
+        fn.destroy()
+    app.update()
+    frame_1 = ttkb.Frame(wrapper,borderwidth=10,)
+    frame_1.pack()
+    total_details = ttkb.Frame(frame_1)
+    total_details.pack(side=BOTTOM)
+    ttkb.Label(total_details,text="Grand Total:").pack(side=LEFT)
+    grand_total = ttkb.Label(total_details,text="0")
+    grand_total.pack(side=LEFT)
+    suit_cart = Suit_Cart_Treeview(frame_1,grand_total)
+    frame_2 = ttkb.Frame(wrapper,borderwidth=10)
+    frame_2.pack()
+    frame_3 = ttkb.Frame(wrapper,borderwidth=10)
+    frame_3.pack()
+    get_product_frame = ttkb.LabelFrame(frame_2,borderwidth=10,padding=65,text="Get Product")
+    sales_frame = ttkb.LabelFrame(frame_2,borderwidth=10,text='Record Sale')
+    suit_tree = Suit_Treeview(frame_3)
+    form = GetProductForm(get_product_frame,connection.cur,suit_tree)
+    Sales_Detail(sales_frame,connection.cur)
+    
+    
+mainPage()
 app.mainloop()
