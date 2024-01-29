@@ -14,6 +14,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from customer.models import Customer
+from sales.model import Items, Sales
 from state import manage_customer, proccess_sales, read_json 
 
 from datetime import datetime 
@@ -26,9 +27,10 @@ p_methods = read_json('state.json','payment_methods')
 
 class Sales_Detail:
     
-    def __init__(self,frame,cursor, *args, **kwargs):
+    def __init__(self,frame,con, *args, **kwargs):
         self.frame = frame
-        self.cursor = cursor
+        self.con = con
+        self.cursor = self.con.cursor()
         self.frame.grid(row=0,column=1,pady=10,padx=5)
         # string vars
         self.name_string = ttkb.StringVar()
@@ -109,21 +111,36 @@ class Sales_Detail:
         total = data['total']
         branch = data['branch']['id']
         expected_price = data['expected_price']
+        sales_id = data['sales_id']
+        item_id =  data['item_id']
         
         date = datetime.now().microsecond
         random_ = math.floor(random()*100)
         bran = data['branch']['name'][:3]
         purchase_id = f'smb{bran}{random_}{date}'
         
+        sales_id += 1
+        
         sale = {'customer_id':customer['customer_id'], 'total_amount':total,
                  'logistics':0.0,"expected_price":expected_price,
                   'destination':'pick-up','remark':self.remark.get('1.0',END).strip(),
                    'channel':'store','payment_method':self.payment_method.get().strip(),
-                   'date':datetime.now().strftime("%d/%b/%Y %H:%M"), 'purchase_id':purchase_id,'paid':True,'branch':branch,
-                #  product_type:str,
-                #  sales_id:int = 0
+                   'date':datetime.now().strftime("%d/%b/%Y %H:%M"), 'purchase_id':purchase_id,
+                   'paid':True,'branch':branch,
+                    'sales_id': sales_id
                  }
-        print(sale)
+        sales = Sales(**sale)
+        sales.add_instance(self.con)
+        for item in items:
+            item_id += 1
+            item = Items(*item.values(),item_id)
+            item.add_instance(self.con,sales_id)
+        
+        # update sales_id
+        # update item_id
+        # clear customer
+        # clear cart
+        #  "cart": {"cart_totals": {"suit": 0, "product": 0, "foot_wear": 0, "top": 0}, "products_meta": {}, "products": []}
         
         
         # print(items)

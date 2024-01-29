@@ -64,7 +64,7 @@ def mainPage():
     sales_frame = ttkb.LabelFrame(frame_2,borderwidth=10,text='Record Sale')
     suit_tree = Suit_Treeview(frame_3)
     form = GetProductForm(get_product_frame,connection.cur,suit_tree)
-    Sales_Detail(sales_frame,connection.cur)
+    Sales_Detail(sales_frame,connection.con)
     
     
 mainPage()

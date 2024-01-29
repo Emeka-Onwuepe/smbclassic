@@ -1,7 +1,7 @@
 class Items:
     def __init__(self, 
-                 product_id:int,suit_id:int,
-                 top_id:int,foot_wear_id:int,
+                 product_id:int,top_id:int,
+                 suit_id:int,foot_wear_id:int,
                  size_id:int,qty:int,
                  unit_price:float,
                  total_price:float,
@@ -13,8 +13,8 @@ class Items:
                  ):
        
         self.product_id = product_id
-        self.suit_id = suit_id
         self.top_id = top_id
+        self.suit_id = suit_id
         self.foot_wear_id = foot_wear_id
         self.size_id = size_id
         self.qty = qty
@@ -43,8 +43,8 @@ class Items:
     @staticmethod
     def create_table(cursor):
         cursor.execute('''CREATE TABLE IF NOT EXISTS items(
-                        product_id INTEGER(20),suit_id INTEGER(20),
-                        top_id INTEGER(20),foot_wear_id INTEGER(20),
+                        product_id INTEGER(20),top_id INTEGER(20),
+                        suit_id INTEGER(20),foot_wear_id INTEGER(20),
                         size_id INTEGER(20),qty INTEGER(20),
                         unit_price REAL,total_price REAL,
                         mini_price REAL,expected_price REAL,
@@ -60,18 +60,24 @@ class Items:
                         )
                        ''')
         
-    def add_instance(self,con):
+    def add_instance(self,con,sales_id):
         cursor = con.cursor()
         items = self.get_instance(cursor,self.items_id)
         if not items:
             cursor.execute('''INSERT INTO items 
                           VALUES(
-                            @product_id,@suit_id,@top_id,
+                            @product_id,@top_id,@suit_id,
                             @foot_wear_id,@size_id,@qty,
                             @unit_price,@total_price,
                             @mini_price,@expected_price,
-                            @p_group,@product_type,@items_id,
-                           @items_id)''',self.__dict__)
+                            @p_group,@product_type,@items_id
+                            )''',self.__dict__)
+            
+            cursor.execute('''INSERT INTO sales_iteams 
+                            VALUES(
+                                @sales_id,@items_id
+                            )
+                           ''',{'sales_id':sales_id,'items_id':self.items_id})
         con.commit()
     
     
@@ -128,7 +134,7 @@ class Sales:
                         destination VARCHAR(150),remark VARCHAR(250),
                         channel VARCHAR(10),payment_method VARCHAR(10),
                         date VARCHAR(15),purchase_id VARCHAR(25),
-                        paid VARCHAR(5),branch INTEGER(20),product_type VARCHAR(50),
+                        paid VARCHAR(5),branch INTEGER(20),
                         sales_id INTEGER(20),
                         
                         FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
@@ -155,7 +161,7 @@ class Sales:
                             @channel,@payment_method,
                             @date,@purchase_id,
                             @paid,@branch,
-                            @product_type,@sales_id,
+                            @sales_id
                             )''',self.__dict__)
         con.commit()
     

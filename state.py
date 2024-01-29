@@ -136,12 +136,14 @@ def proccess_sales(action='get'):
         for key,value in state['cart']['cart_totals'].items():
             total+=value
         
-            
         data={'customer':state['customer'],
               'items': items,'total':total,
               'expected_price':expected_price,
-              'branch':state['branch']
+              'branch':state['branch'],
+              "sales_id":state['sales_id'],
+              "item_id": state['item_id']
               }
+        
         return data
         
         
