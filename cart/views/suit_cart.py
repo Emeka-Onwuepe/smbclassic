@@ -18,7 +18,7 @@ class Suit_Cart_Treeview:
      
         self.columns = ['type','brand','color','gender','age_group',
                         'breasted','button','pics','golden_button',
-                        'product_type','category','size','pgroup',
+                        'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
         self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='success',
@@ -48,7 +48,7 @@ class Suit_Cart_Treeview:
         
         for col in self.columns:
             self.tree.heading(col,text=col)
-            self.tree.column(col,width=80,anchor=CENTER)
+            self.tree.column(col,width=74,anchor=CENTER)
             
         Suit_Cart_Treeview.add_to_cart = self.add_data
         
@@ -70,7 +70,7 @@ class Suit_Cart_Treeview:
         for item in data:
             if not from_state:
                 price = item[-4]
-                item = [*item[:-4],*item[-3:-1],price,1,price,item[-1]]
+                item = [*item[:-4],*item[-3:-2],price,item[-2],price,1,price,item[-1]]
                 refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
         self.updateCart(refined)

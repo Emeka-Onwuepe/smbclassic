@@ -88,7 +88,6 @@ class Sales:
                  channel:str,payment_method:str,
                  date:str,purchase_id:str,
                  paid:bool,branch:int,
-                 product_type:str,
                  sales_id:int = 0
                  ):
        
@@ -104,7 +103,6 @@ class Sales:
         self.purchase_id = purchase_id
         self.paid= paid
         self.branch = branch 
-        self.product_type = product_type
         self.sales_id = sales_id
         
         

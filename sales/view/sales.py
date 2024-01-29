@@ -14,7 +14,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from customer.models import Customer
-from state import manage_customer, read_json  
+from state import manage_customer, proccess_sales, read_json  
 
 # con = sqlite3.connect('database.db')
 # cur = con.cursor()     
@@ -95,7 +95,27 @@ class Sales_Detail:
                 self.name_string.set(customer.name)
                 self.email_string.set(customer.email)
                 self.address_string.set(customer.address)
-                manage_customer('add',customer.__dict__)            
-            
+                manage_customer('add',customer.__dict__) 
+                           
+        
     def record_sales(self):
-        pass
+        data = proccess_sales()
+        customer = data['customer']
+        items = data['items']
+        total = data['total']
+        branch = data['branch']
+        expected_price = data['expected_price']
+        sale = {'customer_id':customer['customer_id'], 'total_amount':total,
+                 'logistics':0.0,"expected_price":expected_price,
+                  'destination':'pick-up','remark':self.remark.get('1.0',END).strip(),
+                   'channel':'store','payment_method':self.payment_method.get().strip(),
+                   'date':None, 'purchase_id':None,'paid':True,'branch':branch,
+                #  product_type:str,
+                #  sales_id:int = 0
+                 }
+        print(sale)
+        
+        
+        # print(items)
+        # print(customer)
+                

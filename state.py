@@ -63,10 +63,12 @@ def update_cart(pgroup,total,product=[],action='add'):
         if action == 'remove':
             id = item
         else:
+            id = item[-1]
+        # if action == 'add':
             price = float(item[-4])
             qty = item[-3]
             total_price = float(item[-2])
-            id = item[-1]
+            product_type = item[-9]
         # check if it exist
         if details.get(id):
             existing = True
@@ -74,16 +76,24 @@ def update_cart(pgroup,total,product=[],action='add'):
         if not existing and action == 'add':
             products.append(item)
             p_id,s_id = id.split('-')
-            details[id] = {'product_id':p_id,'size_id':s_id,
-                           'qty':qty,'price':price,
-                           'total': total_price,
-                           'mini_price':price,
-                           'pgroup':pgroup}
+            proto = {'product_id': None,'top_id':None,
+                     'suit_id':None,'foot_wear_id':None,
+                     'size_id':s_id,'qty':qty,
+                     'unit_price':price,
+                    'total_price':total_price,
+                    'mini_price':price,
+                    'expected_price':price * qty,
+                    'p_group':pgroup,
+                    'product_type':product_type
+                        }
+            proto[f'{pgroup}_id'] = p_id
+            details[id] = proto
         # update 
         if existing and action == 'update':
             details[id]['qty'] = qty
-            details[id]['price'] = price
-            details[id]['total'] = total_price
+            details[id]['unit_price'] = price
+            details[id]['total_price'] = total_price
+            details[id]['expected_price'] = details[id]['mini_price'] * details[id]['qty']
         # delete
         if existing and action == 'remove':
             del details[id]
@@ -113,5 +123,25 @@ def manage_customer(action='get',data={}):
         write_json({},'state.json','customer')
         return
     
+def proccess_sales(action='get'):
+    if action == 'get':
+        state = read_json('state.json')
+        total = 0
+        expected_price = 0
+        
+        items = []
+        for key,value in state['cart']['products_meta'].items():
+            items.append(value)
+            expected_price += value['expected_price']
+        for key,value in state['cart']['cart_totals'].items():
+            total+=value
+        
+            
+        data={'customer':state['customer'],
+              'items': items,'total':total,
+              'expected_price':expected_price,
+              'branch':state['branch']['id']
+              }
+        return data
         
         
