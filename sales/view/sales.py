@@ -14,7 +14,11 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from customer.models import Customer
-from state import manage_customer, proccess_sales, read_json  
+from state import manage_customer, proccess_sales, read_json 
+
+from datetime import datetime 
+from random import random
+import math
 
 # con = sqlite3.connect('database.db')
 # cur = con.cursor()     
@@ -103,13 +107,19 @@ class Sales_Detail:
         customer = data['customer']
         items = data['items']
         total = data['total']
-        branch = data['branch']
+        branch = data['branch']['id']
         expected_price = data['expected_price']
+        
+        date = datetime.now().microsecond
+        random_ = math.floor(random()*100)
+        bran = data['branch']['name'][:3]
+        purchase_id = f'smb{bran}{random_}{date}'
+        
         sale = {'customer_id':customer['customer_id'], 'total_amount':total,
                  'logistics':0.0,"expected_price":expected_price,
                   'destination':'pick-up','remark':self.remark.get('1.0',END).strip(),
                    'channel':'store','payment_method':self.payment_method.get().strip(),
-                   'date':None, 'purchase_id':None,'paid':True,'branch':branch,
+                   'date':datetime.now().strftime("%d/%b/%Y %H:%M"), 'purchase_id':purchase_id,'paid':True,'branch':branch,
                 #  product_type:str,
                 #  sales_id:int = 0
                  }

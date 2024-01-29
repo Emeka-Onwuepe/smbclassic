@@ -1,7 +1,7 @@
 import sqlite3
 import requests
 from credit_sales.model import Credit_Sales, Payment
-from state import read_json
+from state import read_json, write_json
 branch = read_json('state.json','branch')
 
 
@@ -31,6 +31,8 @@ models = {'category':Category,
 
 base = 'http://127.0.0.1:8000/'
 
+
+
 try:
     for key,model_ in  models.items():
         url = f'{base}api/getall?model={key}'
@@ -55,6 +57,13 @@ try:
             
             for size_id in m2m:
                 instance.add_m2m(con,size_id)
+    if type(branch['id']) == str:
+        url = f'{base}api/getbranch?name={branch["name"]}'
+        re = requests.get(url)
+        data = re.json()
+        branch['id'] = data['id']
+        write_json(branch,'state.json','branch')
+        
 except requests.exceptions.ConnectionError:
     print('error')
     

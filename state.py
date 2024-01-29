@@ -140,7 +140,7 @@ def proccess_sales(action='get'):
         data={'customer':state['customer'],
               'items': items,'total':total,
               'expected_price':expected_price,
-              'branch':state['branch']['id']
+              'branch':state['branch']
               }
         return data
         
