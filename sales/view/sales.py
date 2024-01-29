@@ -14,7 +14,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
 from customer.models import Customer
-from state import read_json  
+from state import manage_customer, read_json  
 
 # con = sqlite3.connect('database.db')
 # cur = con.cursor()     
@@ -77,19 +77,25 @@ class Sales_Detail:
                                           bootstyle=SUCCESS).grid(row=7,column=0,
                                                                   columnspan=2,
                                                                   pady=5,padx=5)
+        self.get_customer(True)
         
-    def get_customer(self):
-        data = self.phone.get()
-    
-        customer = Customer.get_instance(self.cursor,data.strip())
-        if customer:
-            self.phone_number_string.set(customer.phone_number)
-            self.name_string.set(customer.name)
-            self.email_string.set(customer.email)
-            self.address_string.set(customer.address)
-            # self.phone_string.set('')
-            # self.phone_string.set('')
-            
+    def get_customer(self,from_state=False):
+        if from_state:
+            customer = manage_customer('get')
+            if customer:
+                self.phone_number_string.set(customer['phone_number'])
+                self.name_string.set(customer['name'])
+                self.email_string.set(customer['email'])
+                self.address_string.set(customer['address'])
+        else:
+            data = self.phone.get()
+            customer = Customer.get_instance(self.cursor,data.strip())
+            if customer:
+                self.phone_number_string.set(customer.phone_number)
+                self.name_string.set(customer.name)
+                self.email_string.set(customer.email)
+                self.address_string.set(customer.address)
+                manage_customer('add',customer.__dict__)            
             
     def record_sales(self):
         pass

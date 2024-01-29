@@ -8,7 +8,7 @@ class Items:
                  mini_price:float,
                  expected_price:float,
                  p_group:str,
-                 prduct_type:str,
+                 product_type:str,
                  items_id:int = 0
                  ):
        
@@ -23,7 +23,7 @@ class Items:
         self.mini_price = mini_price
         self.expected_price = expected_price
         self.p_group = p_group
-        self.prduct_type = prduct_type
+        self.product_type = product_type
         self.items_id = items_id
         
         
@@ -48,7 +48,7 @@ class Items:
                         size_id INTEGER(20),qty INTEGER(20),
                         unit_price REAL,total_price REAL,
                         mini_price REAL,expected_price REAL,
-                        prduct_type VARCHAR(50),
+                        product_type VARCHAR(50),
                         p_group VARCHAR(35),
                         items_id INTEGER(20),
                         
@@ -70,13 +70,13 @@ class Items:
                             @foot_wear_id,@size_id,@qty,
                             @unit_price,@total_price,
                             @mini_price,@expected_price,
-                            @p_group,@prduct_type,@items_id,
+                            @p_group,@product_type,@items_id,
                            @items_id)''',self.__dict__)
         con.commit()
     
     
     def __str__(self):
-        return f"{self.prduct_type} -- {self.total_price}"
+        return f"{self.product_type} -- {self.total_price}"
     
     
 class Sales:
@@ -88,7 +88,7 @@ class Sales:
                  channel:str,payment_method:str,
                  date:str,purchase_id:str,
                  paid:bool,branch:int,
-                 prduct_type:str,
+                 product_type:str,
                  sales_id:int = 0
                  ):
        
@@ -104,7 +104,7 @@ class Sales:
         self.purchase_id = purchase_id
         self.paid= paid
         self.branch = branch 
-        self.prduct_type = prduct_type
+        self.product_type = product_type
         self.sales_id = sales_id
         
         
@@ -130,7 +130,7 @@ class Sales:
                         destination VARCHAR(150),remark VARCHAR(250),
                         channel VARCHAR(10),payment_method VARCHAR(10),
                         date VARCHAR(15),purchase_id VARCHAR(25),
-                        paid VARCHAR(5),branch INTEGER(20),prduct_type VARCHAR(50),
+                        paid VARCHAR(5),branch INTEGER(20),product_type VARCHAR(50),
                         sales_id INTEGER(20),
                         
                         FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
@@ -157,7 +157,7 @@ class Sales:
                             @channel,@payment_method,
                             @date,@purchase_id,
                             @paid,@branch,
-                            @prduct_type,@sales_id,
+                            @product_type,@sales_id,
                             )''',self.__dict__)
         con.commit()
     

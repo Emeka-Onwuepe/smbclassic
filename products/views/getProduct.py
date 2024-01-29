@@ -69,22 +69,14 @@ class GetProductForm:
         pgroup = 'suit'
         products = Product_Class.get_product(self.cursor,pgroup,data)
         
-        # product_type_id,suit_id,size_id
         need_data = []
         for product in products: 
             product = models[pgroup](*product,pgroup)
             values = list(product.__dict__.values())
             
             need_data.append(values) 
-            # edited_data = [*product,pgroup] 
             
         self.suit_tree.add_data(need_data)        
         
-        # # print(product.items())
-        # data = json.dumps(product)
-        # print()
-        # product_type_id,suit_id,size_id  
-            # Querried_Product_Class.suits.append(product)
-        # write_json(need_data,'state.json','q_suits')
         
             

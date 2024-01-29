@@ -2,7 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 
-from state import update_total
+from state import get_products, update_cart
 
 
 
@@ -51,6 +51,9 @@ class Suit_Cart_Treeview:
             self.tree.column(col,width=80,anchor=CENTER)
             
         Suit_Cart_Treeview.add_to_cart = self.add_data
+        
+        data = get_products('suit')
+        self.add_data(data,True)
       
     def get_selected(self,e):
         id = self.tree.focus()
@@ -62,13 +65,15 @@ class Suit_Cart_Treeview:
          
         
                 
-    def add_data(self,data):
+    def add_data(self,data,from_state =False):
+        refined = []
         for item in data:
-            price = item[-4]
-            item = [*item[:-4],*item[-3:-1],price,1,price,item[-1]]
+            if not from_state:
+                price = item[-4]
+                item = [*item[:-4],*item[-3:-1],price,1,price,item[-1]]
+                refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
-            
-        self.cal_total()
+        self.updateCart(refined)
             
         
             
@@ -83,22 +88,23 @@ class Suit_Cart_Treeview:
         self.tree.item(id,text="",values=item)
         self.qty_value.set(0)
         self.price_value.set(0)
-        self.cal_total()
+        self.updateCart([item],'update')
 
     def delete_from_cart(self):
+        data = []
         for record in self.tree.selection():
             self.tree.delete(record)
+            data.append(record)
         self.qty_value.set(0)
         self.price_value.set(0)
+        self.updateCart(data,'remove')
         
-        self.cal_total()
-        
-    def cal_total(self):
+    def updateCart(self,product=[],action='add'):
         suit_total = 0
         ids = self.tree.get_children()
         for id in ids:
             values = self.tree.item(id,'values')
             suit_total += float(values[-2])
-        grand_total = update_total('suit',suit_total)
+        grand_total = update_cart('suit',suit_total,product,action)
         self.grand_total.config(text=grand_total)
         
