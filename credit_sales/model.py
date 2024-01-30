@@ -73,7 +73,7 @@ class Credit_Sales:
                             @channel,@payment_method,
                             @date,@purchase_id,
                             @fully_paid,@branch,
-                            @credit_sales_id,
+                            @credit_sales_id
                             )''',self.__dict__)
         con.commit()
     

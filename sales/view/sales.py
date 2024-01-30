@@ -12,6 +12,7 @@
 import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
+from credit_sales.model import Credit_Sales
 
 from customer.models import Customer
 from sales.model import Items, Sales
@@ -130,43 +131,63 @@ class Sales_Detail:
         random_ = math.floor(random()*100)
         bran = data['branch']['name'][:3]
         purchase_id = f'smb{bran}{random_}{date}'
-        
+        payment_method = self.payment_method.get().strip()
         sales_id += 1
         
-        sale = {'customer_id':customer['customer_id'], 'total_amount':total,
-                 'logistics':0.0,"expected_price":expected_price,
-                  'destination':'pick-up','remark':self.remark.get('1.0',END).strip(),
-                   'channel':'store','payment_method':self.payment_method.get().strip(),
-                   'date':datetime.now().strftime("%d/%b/%Y %H:%M"), 'purchase_id':purchase_id,
-                   'paid':True,'branch':branch,
-                    'sales_id': sales_id
-                 }
-        sales = Sales(**sale)
-        sales.add_instance(self.con)
-        for item in items:
-            item_id += 1
-            item = Items(*item.values(),item_id)
-            item.add_instance(self.con,sales_id)
+        success = True
         
-        # update sales_id
-        write_json(sales_id,'state.json','sales_id')
-        # update item_id
-        write_json(item_id,'state.json','item_id')
-        # clear customer
-        data =  {"name": "", "phone_number": "", "email": "", "address": "", 
-                 "total_credit": 0.0, "total_payment": 0.0, "balance": 0.0,
-                 "customer_id": None}
-        write_json(data,'state.json','customer')
-        # clear cart
-        cart =  {"cart_totals": {"suit": 0, "product": 0, "foot_wear": 0, "top": 0},
-                 "products_meta": {}, "products": []}
-        write_json(cart,'state.json','cart')
-        
-        # clear carts
-        for cart in self.carts:
-            cart.delete_all()
+        if payment_method == 'credit':
+            credit_sale = {'customer_id':customer['customer_id'], 'total_amount':total,
+                            'total_payment':0.0,'balance': total * -1 ,
+                            "expected_price":expected_price,
+                            'remark':self.remark.get('1.0',END).strip(),
+                            'channel':'store','payment_method':payment_method,
+                            'date':datetime.now().strftime("%d/%b/%Y %H:%M"),
+                            'purchase_id':purchase_id,
+                            'fully_paid':False,'branch':branch,'credit_sales_id': sales_id
+                    }
+            sales = Credit_Sales(**credit_sale)
+        elif payment_method != '':
+            sale = {'customer_id':customer['customer_id'], 'total_amount':total,
+                    'logistics':0.0,"expected_price":expected_price,
+                    'destination':'pick-up','remark':self.remark.get('1.0',END).strip(),
+                    'channel':'store','payment_method':payment_method,
+                    'date':datetime.now().strftime("%d/%b/%Y %H:%M"), 'purchase_id':purchase_id,
+                    'paid':True,'branch':branch,
+                        'sales_id': sales_id
+                    }
+            sales = Sales(**sale)
+        else:
+            sales_id -= 1
+            success = False
+        if success:   
+            sales.add_instance(self.con)
+            for item in items:
+                item_id += 1
+                item = Items(*item.values(),item_id)
+                item.add_instance(self.con,sales_id,payment_method)
             
-        self.clear_customer()
+            
+            
+            # update sales_id
+            write_json(sales_id,'state.json','sales_id')
+            # update item_id
+            write_json(item_id,'state.json','item_id')
+            # clear customer
+            data =  {"name": "", "phone_number": "", "email": "", "address": "", 
+                    "total_credit": 0.0, "total_payment": 0.0, "balance": 0.0,
+                    "customer_id": None}
+            write_json(data,'state.json','customer')
+            # clear cart
+            cart =  {"cart_totals": {"suit": 0, "product": 0, "foot_wear": 0, "top": 0},
+                    "products_meta": {}, "products": []}
+            write_json(cart,'state.json','cart')
+            
+            # clear carts
+            for cart in self.carts:
+                cart.delete_all()
+                
+            self.clear_customer()
             
 
         

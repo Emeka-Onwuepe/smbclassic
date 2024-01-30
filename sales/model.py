@@ -60,10 +60,11 @@ class Items:
                         )
                        ''')
         
-    def add_instance(self,con,sales_id):
+    def add_instance(self,con,sales_id,type_):
         cursor = con.cursor()
         items = self.get_instance(cursor,self.items_id)
         if not items:
+            print('hello')
             cursor.execute('''INSERT INTO items 
                           VALUES(
                             @product_id,@top_id,@suit_id,
@@ -73,11 +74,22 @@ class Items:
                             @p_group,@product_type,@items_id
                             )''',self.__dict__)
             
-            cursor.execute('''INSERT INTO sales_iteams 
-                            VALUES(
-                                @sales_id,@items_id
-                            )
-                           ''',{'sales_id':sales_id,'items_id':self.items_id})
+            if type_ == 'credit':
+                print('inside credit sales')
+                print(type_)
+                cursor.execute('''INSERT INTO credit_sales_iteams 
+                                VALUES(
+                                    @sales_id,@items_id
+                                )
+                            ''',{'sales_id':sales_id,'items_id':self.items_id})
+            else:
+                print('inside else')
+                print(type_)
+                cursor.execute('''INSERT INTO sales_iteams 
+                                VALUES(
+                                    @sales_id,@items_id
+                                )
+                            ''',{'sales_id':sales_id,'items_id':self.items_id})
         con.commit()
     
     
