@@ -15,7 +15,7 @@ from ttkbootstrap.constants import *
 
 from customer.models import Customer
 from sales.model import Items, Sales
-from state import manage_customer, proccess_sales, read_json 
+from state import manage_customer, proccess_sales, read_json, write_json 
 
 from datetime import datetime 
 from random import random
@@ -27,7 +27,8 @@ p_methods = read_json('state.json','payment_methods')
 
 class Sales_Detail:
     
-    def __init__(self,frame,con, *args, **kwargs):
+    def __init__(self,frame,con,carts, *args, **kwargs):
+        self.carts = carts
         self.frame = frame
         self.con = con
         self.cursor = self.con.cursor()
@@ -85,6 +86,15 @@ class Sales_Detail:
                                                                   pady=5,padx=5)
         self.get_customer(True)
         
+    def clear_customer(self):
+        self.phone_number_string.set('')
+        self.name_string.set('')
+        self.email_string.set('')
+        self.address_string.set('')
+        self.phone_string.set('')
+        self.payment_method.set("")
+        self.remark.delete('1.0',END)
+        
     def get_customer(self,from_state=False):
         if from_state:
             customer = manage_customer('get')
@@ -102,6 +112,8 @@ class Sales_Detail:
                 self.email_string.set(customer.email)
                 self.address_string.set(customer.address)
                 manage_customer('add',customer.__dict__) 
+            else:
+                 self.clear_customer()
                            
         
     def record_sales(self):
@@ -137,12 +149,25 @@ class Sales_Detail:
             item.add_instance(self.con,sales_id)
         
         # update sales_id
+        write_json(sales_id,'state.json','sales_id')
         # update item_id
+        write_json(item_id,'state.json','item_id')
         # clear customer
+        data =  {"name": "", "phone_number": "", "email": "", "address": "", 
+                 "total_credit": 0.0, "total_payment": 0.0, "balance": 0.0,
+                 "customer_id": None}
+        write_json(data,'state.json','customer')
         # clear cart
-        #  "cart": {"cart_totals": {"suit": 0, "product": 0, "foot_wear": 0, "top": 0}, "products_meta": {}, "products": []}
+        cart =  {"cart_totals": {"suit": 0, "product": 0, "foot_wear": 0, "top": 0},
+                 "products_meta": {}, "products": []}
+        write_json(cart,'state.json','cart')
         
+        # clear carts
+        for cart in self.carts:
+            cart.delete_all()
+            
+        self.clear_customer()
+            
+
         
-        # print(items)
-        # print(customer)
                 

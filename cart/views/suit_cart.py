@@ -108,3 +108,8 @@ class Suit_Cart_Treeview:
         grand_total = update_cart('suit',suit_total,product,action)
         self.grand_total.config(text=grand_total)
         
+    def delete_all(self):
+        for record in self.tree.get_children():
+            self.tree.delete(record)
+        grand_total = update_cart('suit',0,[],'update')
+        self.grand_total.config(text=grand_total)
