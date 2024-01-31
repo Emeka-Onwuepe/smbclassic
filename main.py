@@ -3,6 +3,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from cart.views.suit_cart import Suit_Cart_Treeview
 import connection
+from credit_sales.views.credit_sales import Credit_Sales_Detail
 from products.views.getProduct import GetProductForm
 from qurried.views.queried_suits import Suit_Treeview
 from sales.view.sales import Sales_Detail
@@ -28,6 +29,7 @@ nav = ttkb.Frame(main_frame)
 nav.pack()
 ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack()
 ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack()
+ttkb.Button(nav,text="Credit Sales",command=lambda : creditSalePage()).pack()
 wrapper = ttkb.Frame(main_frame)
 wrapper = ttkb.Frame(main_frame)
 
@@ -40,7 +42,14 @@ def summaryPage():
     app.update()
         
     ttkb.Label(wrapper,text='Sales Summary').pack()
+
+def creditSalePage():
     
+    for fn in wrapper.winfo_children():
+        fn.destroy()
+    app.update()
+    Credit_Sales_Detail(wrapper,connection.con)
+        
 
 
 def mainPage():

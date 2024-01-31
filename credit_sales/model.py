@@ -37,6 +37,24 @@ class Credit_Sales:
             credit_sales = None
         return credit_sales
     
+    @classmethod
+    def get_customer_credits(cls,cursor,phone_number): 
+    
+        credit_sales = cursor.execute('''SELECT * FROM credit_sales
+                                        WHERE customer_id = (SELECT customer_id 
+                                                            FROM customer
+                                                            WHERE phone_number = @phone_number ) 
+                                   ''',{'phone_number':phone_number})
+        credit_sales = credit_sales.fetchall()
+        if credit_sales:
+            credit_sales_ = []
+            for credit_sale in credit_sales:
+                credit_sale = cls(*credit_sale)
+                credit_sales_.append(credit_sale)
+        else:
+            credit_sales_ = None
+        return credit_sales_
+    
     @staticmethod
     def create_table(cursor):
         cursor.execute('''CREATE TABLE IF NOT EXISTS credit_sales(
@@ -84,36 +102,55 @@ class Credit_Sales:
     
 class Payment:
     def __init__(self, 
-                
                  credit_sales_id:int, amount:float,
-                 date:str, payment_id:int = 0
+                 date:str,purchase_id:str
                  ):
        
         self.credit_sales_id = credit_sales_id
         self.amount = amount
         self.date = date
-        self.payment_id = payment_id
+        self.purchase_id = purchase_id
+        self.id = 0
+    
         
         
     @classmethod
-    def get_instance(cls,cursor,payment_id): 
-    
-        credit_sales = cursor.execute('''SELECT * FROM credit_sales
-                                     WHERE payment_id = @payment_id
-                                   ''',{'payment_id':payment_id})
-        credit_sales = credit_sales.fetchone()
-        if credit_sales:
-            credit_sales = cls(*credit_sales)
-        else:
-            credit_sales = None
-        return credit_sales
+    def get_instance(cls,cursor,target,customer=False): 
+        
+        if customer:
+            payment = cursor.execute('''SELECT rowid,* FROM payment
+                                     WHERE credit_sales_id in ( select credit_sales_id
+                                                                from credit_sales
+                                                                where customer_id = (select customer_id 
+                                                                                    from customer
+                                                                                    where phone_number = @phone_number )
+                                                                )
+                                   ''',{'phone_number':target})
+        else:    
+             payment = cursor.execute('''SELECT * FROM payment
+                                     WHERE purchase_id = @purchase_id
+                                   ''',{'purchase_id':target})
+        
+        payments = payment.fetchall()
+        payment_ = []
+        if payments:
+            for payment in payments:
+                if customer:
+                    id = payment[0]
+                    rest = payment[1:]
+                    payment = cls(*rest)
+                    payment.id = id
+                else:
+                   payment = cls(*payment) 
+                payment_.append(payment)
+        return payment_
     
     @staticmethod
     def create_table(cursor):
-        cursor.execute('''CREATE TABLE IF NOT EXISTS credit_sales(
+        cursor.execute('''CREATE TABLE IF NOT EXISTS payment(
                         credit_sales_id INTEGER(20),
                         amount REAL,date VARCHAR(15),
-                        payment_id INTEGER(20),
+                        purchase_id INTEGER(20),
                         
                         FOREIGN KEY (credit_sales_id) REFERENCES credit_sales(credit_sales_id)
                         )
@@ -122,14 +159,25 @@ class Payment:
         
     def add_instance(self,con):
         cursor = con.cursor()
-        credit_sales = self.get_instance(cursor,self.payment_id)
-        if not credit_sales:
-            cursor.execute('''INSERT INTO credit_sales 
+        # payment = self.get_instance(cursor,self.purchase_id)
+        # if not payment:
+        cursor.execute('''INSERT INTO payment 
                           VALUES(
                             @credit_sales_id,
                             @amount,@date,
-                            @payment_id,
+                            @purchase_id
                             )''',self.__dict__)
+        con.commit()
+        
+    @staticmethod  
+    def update_instance(con,amount,rowid):
+        cursor = con.cursor()
+        # payment = self.get_instance(cursor,self.purchase_id)
+        # if not payment:
+        cursor.execute('''UPDATE payment 
+                          SET amount = @amount
+                          WHERE rowid = @rowid
+                            ''',{'amount':amount,'rowid':rowid})
         con.commit()
     
     
