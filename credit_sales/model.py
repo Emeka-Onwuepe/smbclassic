@@ -11,6 +11,7 @@ class Credit_Sales:
        
         self.customer_id = customer_id
         self.total_amount = total_amount
+        self.p_total_amount = total_amount
         self.total_payment = total_payment
         self.balance = balance
         self.expected_price = expected_price
@@ -32,6 +33,7 @@ class Credit_Sales:
                                    ''',{'credit_sales_id':credit_sales_id})
         credit_sales = credit_sales.fetchone()
         if credit_sales:
+            credit_sales = credit_sales[:2] + credit_sales[3:]
             credit_sales = cls(*credit_sales)
         else:
             credit_sales = None
@@ -43,23 +45,24 @@ class Credit_Sales:
         credit_sales = cursor.execute('''SELECT * FROM credit_sales
                                         WHERE customer_id = (SELECT customer_id 
                                                             FROM customer
-                                                            WHERE phone_number = @phone_number ) 
+                                                            WHERE phone_number = @phone_number
+                                                            ) and balance < 0
                                    ''',{'phone_number':phone_number})
         credit_sales = credit_sales.fetchall()
+        credit_sales_ = []
         if credit_sales:
-            credit_sales_ = []
             for credit_sale in credit_sales:
+                credit_sale = credit_sale[:2] + credit_sale[3:]
                 credit_sale = cls(*credit_sale)
                 credit_sales_.append(credit_sale)
-        else:
-            credit_sales_ = None
         return credit_sales_
     
     @staticmethod
     def create_table(cursor):
         cursor.execute('''CREATE TABLE IF NOT EXISTS credit_sales(
                         customer_id INTEGER(20),
-                        total_amount REAL,total_payment REAL,
+                        total_amount REAL,p_total_amount REAL,
+                        total_payment REAL,
                         balance REAL,expected_price REAL,
                         remark VARCHAR(250),
                         channel VARCHAR(10),payment_method VARCHAR(10),
@@ -85,7 +88,9 @@ class Credit_Sales:
             cursor.execute('''INSERT INTO credit_sales 
                           VALUES(
                             @customer_id,
-                            @total_amount,@total_payment,
+                            @total_amount,
+                            @p_total_amount,
+                            @total_payment,
                             @balance,@expected_price,
                             @remark,
                             @channel,@payment_method,
@@ -95,6 +100,16 @@ class Credit_Sales:
                             )''',self.__dict__)
         con.commit()
     
+    @staticmethod
+    def update_instance(con,amount,purchase_id):
+        cursor = con.cursor()
+        
+        cursor.execute('''UPDATE credit_sales 
+                          SET total_payment = total_payment + @amount,
+                          balance = balance + @amount
+                          WHERE purchase_id = purchase_id
+                          ''',{'amount':amount,'purchase_id':purchase_id})
+        con.commit()
     
     def __str__(self):
         return f"{self.total_amount} -- {self.payment_method}"
@@ -172,14 +187,19 @@ class Payment:
     @staticmethod  
     def update_instance(con,amount,rowid):
         cursor = con.cursor()
-        # payment = self.get_instance(cursor,self.purchase_id)
-        # if not payment:
         cursor.execute('''UPDATE payment 
                           SET amount = @amount
                           WHERE rowid = @rowid
                             ''',{'amount':amount,'rowid':rowid})
         con.commit()
     
+    @staticmethod  
+    def delete_instance(con,rowid):
+        cursor = con.cursor()
+        cursor.execute('''DELETE FROM payment 
+                          WHERE rowid = @rowid
+                            ''',{'rowid':rowid})
+        con.commit()
     
     def __str__(self):
         return f"{self.date} -- {self.amount}"

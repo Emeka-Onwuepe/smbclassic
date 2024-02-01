@@ -97,10 +97,15 @@ class Credit_Sales_Detail:
         self.id.grid(row=0,column=1,pady=5,padx=5)
         amount_label_ = ttkb.Label(frame_5,text="Amount").grid(row=1,column=0,pady=5,padx=5)
         ttkb.Entry(frame_5,width=40,textvariable=self.edit_amount_string).grid(row=1,column=1,pady=5,padx=5)
-        ttkb.Button(frame_5,text='Edit payment',
+        ttkb.Button(frame_5,text='Edit Payment',
                                           command = self.edit_payment,
                                           bootstyle=SUCCESS).grid(row=2,column=0,
-                                                                  columnspan=2,
+                                                                #   columnspan=2,
+                                                                  pady=5,padx=5)
+        ttkb.Button(frame_5,text='Delete Payment',
+                                          command = self.delete_payment,
+                                          bootstyle=DANGER).grid(row=2,column=1,
+                                                                #   columnspan=2,
                                                                   pady=5,padx=5)
  
     def get_selected_payment(self,e):
@@ -157,14 +162,39 @@ class Credit_Sales_Detail:
                 }
         payment = Payment(**data)
         payment.add_instance(self.con)
+        Credit_Sales.update_instance(self.con,amount,values[0])
         self.get_customer(True)
         self.amount_string.set(0.0)
         self.purchase_id['text'] = ''
         
     def edit_payment(self):
+        
+        selected = self.payment_tree.focus()
+        values = self.payment_tree.item(selected,'values')
+        prev_amount = values[1]
+        
         id = int(self.id['text'])
         amount = self.edit_amount_string.get()
+        
         Payment.update_instance(self.con,amount,id)
+        
+        diff = amount - float(prev_amount)
+        
+        Credit_Sales.update_instance(self.con,diff,values[0])
+        
+        self.get_customer(True)
+        self.id['text'] = ''
+        self.edit_amount_string.set(0.0)
+        
+    def delete_payment(self):
+        selected = self.payment_tree.focus()
+        values = self.payment_tree.item(selected,'values')
+        amount = float(values[1]) * -1
+        Credit_Sales.update_instance(self.con,amount,values[0])
+        id = int(self.id['text'])
+        Payment.delete_instance(self.con,id)
+        
+        
         self.get_customer(True)
         self.id['text'] = ''
         self.edit_amount_string.set(0.0)
