@@ -1,20 +1,8 @@
-#  <p><strong>Name:</strong> <a href="{% url 'credit_sales:creditSalesView' customer.id 'view' %}">{{customer.name}}</a></p>
-#         <p><strong>Phone Number:</strong>  <a href="tel:{{customer.phone_number}}">{{customer.phone_number}}</a> </p>
-#         <p><strong>Email:</strong> {{customer.email}}</p>
-#         <p><strong>Address:</strong> {{customer.address}}</p>
-#         <p><strong>Purchase_id:</strong> {{sale.purchase_id}}</p>
-#         <p><strong>Payment_method:</strong> {% if sale.payment_method %} {{sale.payment_method}}{% else %} Credit {% endif %}</p>
-#         <p><strong>Remark: </strong>{{sale.remark}}</p>
-#         <p><strong>Date:</strong> {{sale.date}}</p>
-#         <p><strong>Paid: </strong> {{sale.paid}} </p>
-        
-# import sqlite3
 import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from credit_sales.model import Credit_Sales, Payment
-
-
+from ttkbootstrap.dialogs.dialogs import Messagebox
 from state import manage_customer, proccess_sales, read_json, write_json 
 
 from datetime import datetime 
@@ -187,6 +175,11 @@ class Credit_Sales_Detail:
         self.edit_amount_string.set(0.0)
         
     def delete_payment(self):
+        
+        txt = 'Are you sure you want to delete this payment?'
+        result = Messagebox.okcancel(txt)
+        if result == 'Cancel':
+            return
         selected = self.payment_tree.focus()
         values = self.payment_tree.item(selected,'values')
         amount = float(values[1]) * -1

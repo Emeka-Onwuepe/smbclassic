@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
-
+from ttkbootstrap.dialogs.dialogs import Messagebox
 from state import get_products, update_cart
 
 
@@ -74,6 +74,9 @@ class Suit_Cart_Treeview:
                 refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
         self.updateCart(refined)
+        if not from_state:
+            txt = 'Product(s) added'
+            Messagebox.ok(txt)
             
         
             
@@ -91,6 +94,10 @@ class Suit_Cart_Treeview:
         self.updateCart([item],'update')
 
     def delete_from_cart(self):
+        txt = 'Are you sure you want to remove this product from cart?'
+        result = Messagebox.okcancel(txt)
+        if result == "Cancel":
+            return
         data = []
         for record in self.tree.selection():
             self.tree.delete(record)

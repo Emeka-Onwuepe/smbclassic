@@ -1,17 +1,7 @@
-#  <p><strong>Name:</strong> <a href="{% url 'credit_sales:creditSalesView' customer.id 'view' %}">{{customer.name}}</a></p>
-#         <p><strong>Phone Number:</strong>  <a href="tel:{{customer.phone_number}}">{{customer.phone_number}}</a> </p>
-#         <p><strong>Email:</strong> {{customer.email}}</p>
-#         <p><strong>Address:</strong> {{customer.address}}</p>
-#         <p><strong>Purchase_id:</strong> {{sale.purchase_id}}</p>
-#         <p><strong>Payment_method:</strong> {% if sale.payment_method %} {{sale.payment_method}}{% else %} Credit {% endif %}</p>
-#         <p><strong>Remark: </strong>{{sale.remark}}</p>
-#         <p><strong>Date:</strong> {{sale.date}}</p>
-#         <p><strong>Paid: </strong> {{sale.paid}} </p>
-        
-# import sqlite3
 import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs.dialogs import Messagebox
 from credit_sales.model import Credit_Sales
 
 from customer.models import Customer
@@ -118,6 +108,18 @@ class Sales_Detail:
                            
         
     def record_sales(self):
+        
+        payment_method = self.payment_method.get().strip()
+        
+        if not payment_method:
+            Messagebox.ok('Please select a payment method')
+            return
+        
+        txt = 'Are you sure you want to record this sale?'
+        result = Messagebox.okcancel(txt)
+        if result == 'Cancel':
+            return
+        
         data = proccess_sales()
         customer = data['customer']
         items = data['items']
