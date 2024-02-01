@@ -21,7 +21,7 @@ class Suit_Cart_Treeview:
                         'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
-        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='success',
+        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='dark',
                                  show='headings')
         self.tree.pack()
         controls = ttkb.LabelFrame(suit_frame,text='controls')

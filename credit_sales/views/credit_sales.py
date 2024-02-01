@@ -52,7 +52,7 @@ class Credit_Sales_Detail:
                         'Expected Price','Balance','credit_sales_id'
                         ]
         
-        self.tree = ttkb.Treeview(frame_2,columns=self.columns,bootstyle='success',
+        self.tree = ttkb.Treeview(frame_2,columns=self.columns,bootstyle='dark',
                                  show='headings')
         self.tree.grid(row=0,column=0,pady=5,padx=5)
         
@@ -80,7 +80,7 @@ class Credit_Sales_Detail:
         frame_4.grid(row=1,column=1,pady=5,padx=5)                             
         self.columns_ = ['Purchase Id','Amount','Date','Id']
         
-        self.payment_tree = ttkb.Treeview(frame_4,columns=self.columns_,bootstyle='success',
+        self.payment_tree = ttkb.Treeview(frame_4,columns=self.columns_,bootstyle='dark',
                                  show='headings')
         self.payment_tree.grid(row=1,column=1,pady=5,padx=5)
         

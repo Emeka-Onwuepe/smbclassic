@@ -23,7 +23,7 @@ class Suit_Treeview:
                         'size','pgroup','id'
                         ]
         # self.columns = ['type','brand']
-        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='success',
+        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='dark',
                                  show='headings')
         # self.tree.tag_configure('even',background='lightgreen')
         self.tree.pack()
