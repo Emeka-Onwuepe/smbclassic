@@ -85,6 +85,10 @@ class Sales_Detail:
         self.phone_string.set('')
         self.payment_method.set("")
         self.remark.delete('1.0',END)
+        data =  {"name": "", "phone_number": "", "email": "", "address": "", 
+                    "total_credit": 0.0, "total_payment": 0.0, "balance": 0.0,
+                    "customer_id": None}
+        write_json(data,'state.json','customer')
         
     def get_customer(self,from_state=False):
         if from_state:
@@ -105,9 +109,16 @@ class Sales_Detail:
                 manage_customer('add',customer.__dict__) 
             else:
                  self.clear_customer()
+                 Messagebox.ok('Customer not found')
                            
         
     def record_sales(self):
+        
+        data = proccess_sales()
+        items = data['items']
+        if not items:
+            Messagebox.ok('Your cart is empty')
+            return
         
         payment_method = self.payment_method.get().strip()
         
@@ -120,8 +131,25 @@ class Sales_Detail:
         if result == 'Cancel':
             return
         
-        data = proccess_sales()
+       
+        
         customer = data['customer']
+        if not customer['customer_id']:
+            name = self.name_string.get().strip()
+            phone_number = self.phone_number_string.get().strip()
+            email = self.email_string.get().strip()
+            address = self.address_string.get().strip()
+            customer = Customer(name,phone_number,email,address)
+            customer.set_id(self.cursor)
+            print(customer.customer_id)
+            check = customer.add_instance(self.con)
+            if check:
+                customer = check.__dict__
+            else:
+                customer = customer.__dict__
+            print(customer)
+            manage_customer('add',customer) 
+            
         items = data['items']
         total = data['total']
         branch = data['branch']['id']

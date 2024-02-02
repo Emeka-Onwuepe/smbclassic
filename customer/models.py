@@ -14,7 +14,14 @@ class Customer:
         self.total_payment = total_payment
         self.balance = balance 
         self.customer_id = customer_id
-        
+
+
+    def set_id(self,cursor):
+        id = cursor.execute('''Select max(customer_id)
+                                from customer
+                            ''')
+        [id] = id.fetchone()
+        self.customer_id = id + 2
         
     @classmethod
     def get_instance(cls,cursor,phone_number): 
@@ -41,11 +48,15 @@ class Customer:
     def add_instance(self,con):
         cursor = con.cursor()
         customer = self.get_instance(cursor,self.phone_number)
+        
         if not customer:
             cursor.execute('''INSERT INTO customer 
                           VALUES(@name,@phone_number,@email,@address,
                            @total_credit,@total_payment,@balance,@customer_id)''',self.__dict__)
+        else:
+            return customer
         con.commit()
+        return False
     
     
     def __str__(self):
