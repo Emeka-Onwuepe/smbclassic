@@ -64,7 +64,6 @@ class Items:
         cursor = con.cursor()
         items = self.get_instance(cursor,self.items_id)
         if not items:
-            print('hello')
             cursor.execute('''INSERT INTO items 
                           VALUES(
                             @product_id,@top_id,@suit_id,
@@ -75,22 +74,32 @@ class Items:
                             )''',self.__dict__)
             
             if type_ == 'credit':
-                print('inside credit sales')
-                print(type_)
                 cursor.execute('''INSERT INTO credit_sales_iteams 
                                 VALUES(
                                     @sales_id,@items_id
                                 )
                             ''',{'sales_id':sales_id,'items_id':self.items_id})
             else:
-                print('inside else')
-                print(type_)
                 cursor.execute('''INSERT INTO sales_iteams 
                                 VALUES(
                                     @sales_id,@items_id
                                 )
                             ''',{'sales_id':sales_id,'items_id':self.items_id})
         con.commit()
+      
+    @staticmethod  
+    def get_items(cursor,type_,id):
+        if type_ == 'credit':
+            target = 'credit_sales_id'
+            table = 'credit_sales_iteams'
+        else:
+            target = 'sales_id'
+            table = 'sales_iteams'
+        results = cursor.execute(f''' SELECT * FROM items
+                                      JOIN {table} as sale
+                                      ON sale.items_id = items.items_id 
+                                      WHERE sale.{target} = @id''',{'id':id})
+        return results.fetchall()
     
     
     def __str__(self):
@@ -187,6 +196,14 @@ class Sales:
                                     GROUP BY payment_method,
                                     Trim(REPLACE(date,substr(date,-6),'') )
                                  ''' )
+        return results.fetchall()
+    
+    @staticmethod
+    def get_sales(cursor):
+        results = cursor.execute('''
+                                    SELECT * from sales
+                                 ''' )
+        
         return results.fetchall()
     
     

@@ -130,6 +130,27 @@ class Credit_Sales:
                                  ''',{'date':date} )
         return results.fetchall()
         
+        
+    @staticmethod
+    def get_credit_sales(cursor,ids):
+        string = ''
+        # ids = string.join(ids)
+        # print(ids)
+        index = 0
+        last = len(ids) - 1
+        for id in ids:
+            if index < last:
+                string+=f'?,'
+            else:
+                string+=f'?'
+            index += 1
+        
+        querry =f'''SELECT * from credit_sales
+                    where credit_sales_id in ({string})
+                                 '''
+        results = cursor.execute(querry, ids)
+        
+        return results.fetchall()
     
     def __str__(self):
         return f"{self.total_amount} -- {self.payment_method}"
@@ -235,6 +256,11 @@ class Payment:
                                     GROUP BY customer.customer_id,
                                     Trim(REPLACE(payment.date,substr(payment.date,-6),'') )
                                  ''' )
+        return results.fetchall()
+    
+    @staticmethod
+    def get_payments(cursor):
+        results = cursor.execute('''SELECT * FROM payment''')
         return results.fetchall()
     
     def __str__(self):

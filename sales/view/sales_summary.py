@@ -22,7 +22,9 @@ class Sales_Summary:
         self.frame = frame
         self.con = con
         self.cursor = self.con.cursor()
-        
+        self.data = {'sales':[],
+                     'credit_sales':[],
+                     'payment':[]} 
         frame_1=ttkb.LabelFrame(frame,borderwidth=10,text='Sales')
         frame_1.grid(row=0,column=0,pady=5,padx=5)
         frame_2=ttkb.LabelFrame(frame,borderwidth=10,text=' Credit Sales')
@@ -61,7 +63,10 @@ class Sales_Summary:
         self.add_sales()
         self.add_credit_sales()
         self.add_payments()
-            
+        
+        # prepare data
+        self.prepare_date()
+        
     def add_sales(self):
         data = Sales.get_summary(self.cursor)
         for item in data:
@@ -77,4 +82,46 @@ class Sales_Summary:
         data = Payment.get_summary(self.cursor)
         for item in data:
             self.payment_tree.insert('',END,values=item)
+            
+    def prepare_date(self):
+        sales_data = []
+        credit_sales_data = []
+        payments_data = []
+        credit_sales_id = read_json('state.json','credit_sales')
+        sales = Sales.get_sales(self.cursor)
+        credit_sales = Credit_Sales.get_credit_sales(self.cursor,credit_sales_id)
+        payments = Payment.get_payments(self.cursor)
+        # prepare sales
+        for sale in sales:
+            sale = Sales(*sale)
+            items = Items.get_items(self.cursor,'sales',sale.sales_id)
+            sale = sale.__dict__
+            sale['items'] = []
+            for item in items:
+                item = Items(*item[:-2])
+                sale['items'].append(item.__dict__)
+            sales_data.append(sale)
+        # prepare credit sales
+        for sale in credit_sales:
+            sale = list(sale)
+            sale.pop(1)
+            sale = Credit_Sales(*sale)
+            items = Items.get_items(self.cursor,'credit',sale.credit_sales_id)
+            sale = sale.__dict__
+            del sale['p_total_amount']
+            sale['items'] = []
+            for item in items:
+                item = Items(*item[:-2])
+                item = item.__dict__
+                sale['items'].append(item)
+            credit_sales_data.append(sale)
+        # prepare payments
+        for payment in payments:
+            payment = Payment(*payment)
+            payments_data.append(payment.__dict__)
+        
+        self.data = {'sales':sales_data,
+                     'credit_sales':credit_sales_data,
+                     'payment':payments_data}  
+        
 
