@@ -74,7 +74,7 @@ class Suit_Cart_Treeview:
                 refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
         self.updateCart(refined)
-        if not from_state:
+        if not from_state and refined:
             txt = 'Product(s) added'
             Messagebox.ok(txt)
             

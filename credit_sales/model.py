@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Credit_Sales:
     def __init__(self, 
                  customer_id:int,total_amount:float,
@@ -110,6 +113,23 @@ class Credit_Sales:
                           WHERE purchase_id = purchase_id
                           ''',{'amount':amount,'purchase_id':purchase_id})
         con.commit()
+        
+    @staticmethod
+    def get_summary(cursor):
+        date =  datetime.now().strftime("%d/%b/%Y")
+        results = cursor.execute('''
+                                 SELECT customer.name,customer.phone_number,
+                                 sum(total_amount) as total,
+                                 Trim(REPLACE(date,substr(date,-6),'') ) as date
+                                 FROM credit_sales
+                                 JOIN customer
+                                 ON customer.customer_id = credit_sales.customer_id
+                                 WHERE Trim(REPLACE(date,substr(date,-6),'') ) = @date
+                                 GROUP BY customer.customer_id,
+                                 Trim(REPLACE(date,substr(date,-6),'') )
+                                 ''',{'date':date} )
+        return results.fetchall()
+        
     
     def __str__(self):
         return f"{self.total_amount} -- {self.payment_method}"
@@ -200,6 +220,22 @@ class Payment:
                           WHERE rowid = @rowid
                             ''',{'rowid':rowid})
         con.commit()
+        
+    @staticmethod
+    def get_summary(cursor):
+        results = cursor.execute('''
+                                    SELECT customer.name,customer.phone_number,
+                                    sum(payment.amount) as amount,
+                                    Trim(REPLACE(payment.date,substr(payment.date,-6),'') ) as date
+                                    from payment
+                                    JOIN credit_sales
+                                    ON payment.credit_sales_id = credit_sales.credit_sales_id
+                                    JOIN customer
+                                    ON customer.customer_id = credit_sales.customer_id
+                                    GROUP BY customer.customer_id,
+                                    Trim(REPLACE(payment.date,substr(payment.date,-6),'') )
+                                 ''' )
+        return results.fetchall()
     
     def __str__(self):
         return f"{self.date} -- {self.amount}"

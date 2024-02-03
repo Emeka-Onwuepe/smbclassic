@@ -176,6 +176,18 @@ class Sales:
                             @sales_id
                             )''',self.__dict__)
         con.commit()
+        
+    @staticmethod
+    def get_summary(cursor):
+        results = cursor.execute('''
+                                    SELECT Trim(REPLACE(date,substr(date,-6),'') ) AS date,
+                                    payment_method,
+                                    sum(total_amount) as total_amount
+                                    FROM sales
+                                    GROUP BY payment_method,
+                                    Trim(REPLACE(date,substr(date,-6),'') )
+                                 ''' )
+        return results.fetchall()
     
     
     def __str__(self):

@@ -8,6 +8,8 @@ from products.views.getProduct import GetProductForm
 from qurried.views.queried_suits import Suit_Treeview
 from sales.view.sales import Sales_Detail
 from ttkbootstrap.scrolled import ScrolledFrame
+
+from sales.view.sales_summary import Sales_Summary
 # from state import read_json
 
 querried = {'suit':[]}
@@ -40,8 +42,8 @@ def summaryPage():
     for fn in wrapper.winfo_children():
         fn.destroy()
     app.update()
-        
-    ttkb.Label(wrapper,text='Sales Summary').pack()
+    Sales_Summary(wrapper,connection.con)  
+    
 
 def creditSalePage():
     
