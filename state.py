@@ -141,7 +141,8 @@ def proccess_sales(action='get'):
               'expected_price':expected_price,
               'branch':state['branch'],
               "sales_id":state['sales_id'],
-              "item_id": state['item_id']
+              "item_id": state['item_id'],
+              "credit_sales": state['credit_sales']
               }
         
         return data

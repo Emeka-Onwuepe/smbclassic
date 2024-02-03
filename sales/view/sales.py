@@ -141,13 +141,11 @@ class Sales_Detail:
             address = self.address_string.get().strip()
             customer = Customer(name,phone_number,email,address)
             customer.set_id(self.cursor)
-            print(customer.customer_id)
             check = customer.add_instance(self.con)
             if check:
                 customer = check.__dict__
             else:
                 customer = customer.__dict__
-            print(customer)
             manage_customer('add',customer) 
             
         items = data['items']
@@ -156,6 +154,7 @@ class Sales_Detail:
         expected_price = data['expected_price']
         sales_id = data['sales_id']
         item_id =  data['item_id']
+        credit_sales_ids = data['credit_sales']
         
         date = datetime.now().microsecond
         random_ = math.floor(random()*100)
@@ -196,9 +195,12 @@ class Sales_Detail:
                 item_id += 1
                 item = Items(*item.values(),item_id)
                 item.add_instance(self.con,sales_id,payment_method)
+                
+            if payment_method == 'credit':
+                credit_sales_ids.append(sales.credit_sales_id)
             
-            
-            
+            # update credit_sales id list
+            write_json(credit_sales_ids,'state.json','credit_sales')
             # update sales_id
             write_json(sales_id,'state.json','sales_id')
             # update item_id
