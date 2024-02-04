@@ -48,8 +48,8 @@ class Items:
                         size_id INTEGER(20),qty INTEGER(20),
                         unit_price REAL,total_price REAL,
                         mini_price REAL,expected_price REAL,
-                        product_type VARCHAR(50),
                         p_group VARCHAR(35),
+                        product_type VARCHAR(50),
                         items_id INTEGER(20),
                         
                         FOREIGN KEY (product_id) REFERENCES product(product_id),
@@ -201,7 +201,11 @@ class Sales:
     @staticmethod
     def get_sales(cursor):
         results = cursor.execute('''
-                                    SELECT * from sales
+                                   SELECT sales.*,c.phone_number,c.email,
+                                    c.name,c.address
+                                    from sales
+                                    JOIN customer as c
+                                    ON c.customer_id = sales.customer_id
                                  ''' )
         
         return results.fetchall()

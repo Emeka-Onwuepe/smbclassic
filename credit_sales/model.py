@@ -145,7 +145,12 @@ class Credit_Sales:
                 string+=f'?'
             index += 1
         
-        querry =f'''SELECT * from credit_sales
+        querry =f'''SELECT credit_sales.*,
+                    c.phone_number,c.email,
+                    c.name,c.address
+                    from credit_sales
+                    JOIN customer as c
+                    ON c.customer_id = credit_sales.customer_id
                     where credit_sales_id in ({string})
                                  '''
         results = cursor.execute(querry, ids)
