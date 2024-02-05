@@ -210,6 +210,22 @@ class Sales:
         
         return results.fetchall()
     
+    @staticmethod
+    def delete_sale(con,sales_id):
+        cursor = con.cursor()
+        cursor.execute('''DELETE FROM  sales
+                          WHERE sales_id = @sales_id
+                            ''',{'sales_id':sales_id})
+        cursor.execute('''DELETE FROM  items
+                          WHERE items_id = (SELECT items_id
+                                            FROM sales_iteams
+                                            WHERE sales_id = @sales_id)
+                            ''',{'sales_id':sales_id})
+        cursor.execute('''DELETE FROM  sales_iteams
+                          WHERE sales_id = @sales_id
+                            ''',{'sales_id':sales_id})
+        con.commit()
+    
     
     def __str__(self):
         return f"{self.total_amount} -- {self.payment_method}"

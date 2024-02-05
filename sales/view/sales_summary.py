@@ -26,7 +26,7 @@ class Sales_Summary:
         self.cursor = self.con.cursor()
         self.data = {'sales':[],
                      'credit_sales':[],
-                     'payment':[]} 
+                     'payments':[]} 
         frame_1=ttkb.LabelFrame(frame,borderwidth=10,text='Credit Sales')
         frame_1.grid(row=0,column=0,pady=5,padx=5)
         frame_2=ttkb.LabelFrame(frame,borderwidth=10,text=' Payment')
@@ -87,6 +87,8 @@ class Sales_Summary:
         self.prepare_date()
  
     def add_sales(self):
+        for record in self.sales_tree.get_children():
+            self.sales_tree.delete(record)
         data = Sales.get_summary(self.cursor)
         for item in data:
             self.sales_tree.insert('',END,values=item)
@@ -98,6 +100,8 @@ class Sales_Summary:
        
     
     def add_payments(self):
+        for record in self.payment_tree.get_children():
+            self.payment_tree.delete(record)
         data = Payment.get_summary(self.cursor)
         for item in data:
             self.payment_tree.insert('',END,values=item)
@@ -142,7 +146,7 @@ class Sales_Summary:
             sale['email'] = customer[1]
             sale['name'] = customer[2]
             sale['address'] = customer[3]
-            
+            sale['payment_method'] = 'credit'
             del sale['p_total_amount']
             sale['orders'] = []
             # sale['branch_id'] = branch['id']
@@ -151,19 +155,24 @@ class Sales_Summary:
                 item = item.__dict__
                 sale['orders'].append(item)
             credit_sales_data.append(sale)
+            
         # prepare payments
         for payment in payments:
-            payment = Payment(*payment)
-            payments_data.append(payment.__dict__)
+            id = payment[0]
+            payment = Payment(*payment[1:])
+            payment = payment.__dict__
+            payment['id'] = id
+            payments_data.append(payment)
         
         self.data = {'sales':sales_data,
                      'credit_sales':credit_sales_data,
-                     'payment':payments_data}  
+                     'payments':payments_data}  
         
     def submit_data(self):
+        credit_sales_id = read_json('state.json','credit_sales')
         logged = False
         base = 'http://127.0.0.1:8000/api/'
-        sales = self.data['sales']
+
         login_data = {"email":'pascalemy2010@gmail.com',
                       'password':'casdonmystery1959'}
         url = base + 'login'
@@ -173,17 +182,39 @@ class Sales_Summary:
         if login.status_code == 200:
             logged =True
             user = login.json()
-            print(user)
             headers['Authorization'] = f"Token {user['token']}"
-            print(headers)
+        
         if not logged:
             return
-        for sale in sales:
+        for item in self.data['sales']:
             url = base + 'process'
-            data  = json.dumps(sale)
+            data  = json.dumps(item)
             re = requests.post(url,data,headers=headers)
-            response = re.text
-            print(response)
+            if re.status_code == 200:
+                Sales.delete_sale(self.con,item['sales_id'])
+                self.add_sales()
+            
+        
+            # response = re.text
+        for item in self.data['credit_sales']:
+            url = base + 'process'
+            data  = json.dumps(item)
+            re = requests.post(url,data,headers=headers)
+            if re.status_code == 200:
+                credit_sales_id.pop(credit_sales_id.index(item['credit_sales_id']))
+                write_json(credit_sales_id,'state.json','credit_sales')
+                Credit_Sales.delete_credit_sale(self.con,item['credit_sales_id'])
+                
+        for item in self.data['payments']:
+            url = base + 'creditpayment'
+            data  = json.dumps(item)
+            re = requests.post(url,data,headers=headers)
+            if re.status_code == 200:
+                data = re.json()
+                Payment.delete_instance(self.con,data['id'])
+                self.add_payments()
+        
+        
             
 
 # let response = await fetch(url, {

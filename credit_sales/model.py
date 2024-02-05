@@ -157,6 +157,19 @@ class Credit_Sales:
         
         return results.fetchall()
     
+    @staticmethod
+    def delete_credit_sale(con,credit_sales_id):
+        cursor = con.cursor()
+        cursor.execute('''DELETE FROM  items
+                          WHERE items_id = (SELECT items_id
+                                            FROM credit_sales_iteams
+                                            WHERE credit_sales_id = @credit_sales_id)
+                            ''',{'credit_sales_id':credit_sales_id})
+        cursor.execute('''DELETE FROM  credit_sales_iteams
+                          WHERE credit_sales_id = @credit_sales_id
+                            ''',{'credit_sales_id':credit_sales_id})
+        con.commit()
+    
     def __str__(self):
         return f"{self.total_amount} -- {self.payment_method}"
     
@@ -265,7 +278,7 @@ class Payment:
     
     @staticmethod
     def get_payments(cursor):
-        results = cursor.execute('''SELECT * FROM payment''')
+        results = cursor.execute('''SELECT rowid,* FROM payment''')
         return results.fetchall()
     
     def __str__(self):
