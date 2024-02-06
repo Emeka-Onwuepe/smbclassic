@@ -75,7 +75,7 @@ def update_cart(pgroup,total,product=[],action='add'):
         # add product  
         if not existing and action == 'add':
             products.append(item)
-            p_id,s_id = id.split('-')
+            p_id,s_id,_ = id.split('-')
             proto = {'product_id': None,'top_id':None,
                      'suit_id':None,'foot_wear_id':None,
                      'size_id':s_id,'qty':qty,
@@ -109,6 +109,12 @@ def get_products(pgroup):
     cart = read_json('state.json','cart')
     products = cart['products']
     products = [product for product in products if product[-5]== pgroup]
+    for product in products:
+        id = product[-1]
+        meta = cart['products_meta'][id]
+        product[-4] = meta['unit_price']
+        product[-3] = meta['qty']
+        product[-2] = meta['total_price']   
     return products
     
     

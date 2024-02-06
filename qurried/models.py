@@ -42,7 +42,7 @@ class Querried_Product(Querried_Product_Class):
         self.price = price
         self.size = size
         self.pgroup = pgroup
-        self.id = f'{product_id}-{size_id}'
+        self.id = f'{product_id}-{size_id}-{pgroup}'
         
     def __str__(self) -> str:
         return f'{self.product_type}-{self.category}-{self.size} -{self.price}'
@@ -83,7 +83,7 @@ class Querried_Suit(Querried_Product_Class):
         self.price = price
         self.size = size
         self.pgroup = pgroup
-        self.id = f'{suit_id}-{size_id}'
+        self.id = f'{suit_id}-{size_id}-{pgroup}'
         
     def __str__(self) -> str:
         return f'{self.product_type}-{self.category}-{self.size} -{self.price}'
@@ -118,7 +118,7 @@ class Querried_Top(Querried_Product_Class):
         self.price = price
         self.size = size
         self.pgroup = pgroup
-        self.id = f'{top_id}-{size_id}'
+        self.id = f'{top_id}-{size_id}-{pgroup}'
         
     def __str__(self) -> str:
         return f'{self.product_type}-{self.size} -{self.price}'
@@ -151,7 +151,7 @@ class Querried_Foot_Wear(Querried_Product_Class):
         self.price = price
         self.size = size
         self.pgroup = pgroup
-        self.id = f'{foot_wear_id}-{size_id}'
+        self.id = f'{foot_wear_id}-{size_id}-{pgroup}'
         
     def __str__(self) -> str:
         return f'{self.product_type}-{self.size} -{self.price}'

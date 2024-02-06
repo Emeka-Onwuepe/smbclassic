@@ -213,6 +213,8 @@ class Sales_Summary:
                 data = re.json()
                 Payment.delete_instance(self.con,data['id'])
                 self.add_payments()
+                
+        # remember to update credit_sale and item ids
         
         
             
