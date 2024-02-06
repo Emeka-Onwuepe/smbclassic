@@ -2,7 +2,10 @@ import tkinter as tk
 import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from products.model import Product_Class
-from qurried.models import Querried_Foot_Wear, Querried_Product, Querried_Product_Class, Querried_Suit, Querried_Top
+from qurried.models import (Querried_Foot_Wear, Querried_Product, 
+                            Querried_Product_Class, Querried_Suit, 
+                            Querried_Top)
+from ttkbootstrap.dialogs.dialogs import Messagebox
 from state import read_json, write_json
 pgroup_ = read_json('state.json','pgroup')
 gender_ = read_json('state.json','gender')
@@ -23,11 +26,20 @@ models = {
 
 class GetProductForm:
 
-    def __init__(self,frame,cursor,suit_tree,*args, **kwargs):
+    def __init__(self,frame,cursor,suit_tree,
+                 top_tree,foot_wear_tree,
+                 product_tree,
+                 *args, **kwargs):
         # frame = ttkb.Frame(app,borderwidth=10,style='light')
         frame.grid(row=0,column=0,pady=10,padx=5)
         self.cursor = cursor
-        self.suit_tree = suit_tree
+        
+        self.queried_trees = {'product':product_tree,
+                              'suit':suit_tree,
+                              'top':top_tree,
+                              'foot_wear':foot_wear_tree,
+                                }
+        
         pgroup_label = ttkb.Label(frame,text="P_Group").grid(row=1,column=0,pady=5,padx=5)
         self.pgroup = ttkb.Combobox(frame,values=pgroup_,width=40)
         self.pgroup.grid(row=1,column=1,pady=5,padx=5)
@@ -64,9 +76,9 @@ class GetProductForm:
         data = {'type':self.type.get().strip(),'brand':self.brand.get().strip(),
                 'color':self.color.get().strip(),'gender':self.gender.get().strip(),
                 'age_group':self.age_group.get().strip(),'product_type':self.product_type.get().strip()}
-        data = {'type': 'normal', 'brand': 'GB', 'color': 'Red', 'gender': 'U', 'age_group': 'A', 'product_type': 'First Turkish'}
+        data = {'type': 'normal', 'brand': 'GB', 'color': 'red', 'gender': 'U', 'age_group': 'A', 'product_type': 'First Turkish'}
         pgroup = self.pgroup.get().strip()
-        pgroup = 'suit'
+        pgroup = 'foot_wear'
         products = Product_Class.get_product(self.cursor,pgroup,data)
         
         need_data = []
@@ -75,8 +87,16 @@ class GetProductForm:
             values = list(product.__dict__.values())
             
             need_data.append(values) 
+        
+        self.queried_trees[pgroup].add_data(need_data)
+        if need_data:
+            msg = "Product(s) found"
+        else:
+            msg = "Product(s) not found"
             
-        self.suit_tree.add_data(need_data)        
+        Messagebox.ok(msg)
+            
+                    
         
         
             

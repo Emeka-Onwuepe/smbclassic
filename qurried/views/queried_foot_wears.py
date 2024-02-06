@@ -3,18 +3,18 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from statics import queried_tree_height,frame_pady
 
-from cart.views.suit_cart import Suit_Cart_Treeview
-class Suit_Treeview:
+from cart.views.foot_wears_cart import Foot_Wear_Cart_Treeview
+class Foot_Wear_Treeview:
     def __init__(self,frame):
         self.frame = frame
-        suit_frame = ttkb.LabelFrame(self.frame,width=1360,text='Suits')
-        suit_frame.pack(pady=frame_pady)
+        foot_wear_frame = ttkb.LabelFrame(self.frame,width=1360,text='foot_wears')
+        foot_wear_frame.pack(pady=frame_pady)
         self.columns = ['type','brand','color','gender','age_group',
-                        'breasted','button','pics','golden_button',
+                        'sole_color',
                         'product_type','category','price',
                         'size','pgroup','id'
                         ]
-        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,
+        self.tree = ttkb.Treeview(foot_wear_frame,columns=self.columns,
                                   height=queried_tree_height,
                                   bootstyle='dark',
                                  show='headings')
@@ -33,7 +33,7 @@ class Suit_Treeview:
         for id in ids:
             item = self.tree.item(id,'values')
             selected.append(item)
-        Suit_Cart_Treeview.add_to_cart(selected)
+        Foot_Wear_Cart_Treeview.add_to_cart(selected)
             
             
     def add_data(self,data):

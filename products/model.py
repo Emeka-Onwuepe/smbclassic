@@ -237,9 +237,9 @@ class Product(Product_Class):
     
     def add_instance(self,con):
         cursor = con.cursor()
-        size = self.get_instance(cursor,self.size)
-        if not size:
-            cursor.execute(f'''INSERT INTO size 
+        product = self.get_instance(cursor,self.product_id)
+        if not product:
+            cursor.execute(f'''INSERT INTO product 
                           VALUES({Product_Class.add_str}
                               @product_type_id,@product_id)''',self.__dict__)
         con.commit()
@@ -392,9 +392,9 @@ class Top(Product_Class):
     
     def add_instance(self,con):
         cursor = con.cursor()
-        size = self.get_instance(cursor,self.size)
-        if not size:
-            cursor.execute(f'''INSERT INTO size 
+        top = self.get_instance(cursor,self.top_id)
+        if not top:
+            cursor.execute(f'''INSERT INTO top 
                           VALUES({Product_Class.add_str}
                               @product_type_id,
                               @sleeves,
@@ -465,9 +465,9 @@ class Foot_Wear(Product_Class):
     
     def add_instance(self,con):
         cursor = con.cursor()
-        size = self.get_instance(cursor,self.size)
-        if not size:
-            cursor.execute(f'''INSERT INTO size 
+        foot_wear = self.get_instance(cursor,self.foot_wear_id)
+        if not foot_wear:
+            cursor.execute(f'''INSERT INTO foot_wear 
                           VALUES({Product_Class.add_str}
                               @product_type_id,
                               @sole_color,

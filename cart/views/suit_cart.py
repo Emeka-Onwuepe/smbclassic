@@ -3,6 +3,7 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs.dialogs import Messagebox
 from state import get_products, update_cart
+from statics import tree_height,frame_pady
 
 
 
@@ -13,15 +14,18 @@ class Suit_Cart_Treeview:
     def __init__(self,frame,grand_total):
         self.frame = frame
         self.grand_total = grand_total
-        suit_frame = ttkb.LabelFrame(self.frame,width=1360,text='Suits Cart')
-        suit_frame.pack()
+        suit_frame = ttkb.LabelFrame(self.frame,width=1360,
+                                     text='Suits Cart')
+        suit_frame.pack(pady=frame_pady)
      
         self.columns = ['type','brand','color','gender','age_group',
                         'breasted','button','pics','golden_button',
                         'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
-        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,bootstyle='dark',
+        self.tree = ttkb.Treeview(suit_frame,columns=self.columns,
+                                  height=tree_height,
+                                  bootstyle='dark',
                                  show='headings')
         self.tree.pack()
         controls = ttkb.LabelFrame(suit_frame,text='controls')

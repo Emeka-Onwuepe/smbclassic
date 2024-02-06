@@ -8,26 +8,26 @@ from statics import tree_height,frame_pady
 
 
 
-class Top_Cart_Treeview:
+class Foot_Wear_Cart_Treeview:
     add_to_cart = None
 
     def __init__(self,frame,grand_total):
         self.frame = frame
         self.grand_total = grand_total
-        top_frame = ttkb.LabelFrame(self.frame,width=1360,text='Tops Cart')
-        top_frame.pack(pady=frame_pady)
+        foot_wear_frame = ttkb.LabelFrame(self.frame,width=1360,text='Foot Wears Cart')
+        foot_wear_frame.pack(pady=frame_pady)
      
         self.columns = ['type','brand','color','gender','age_group',
-                        'sleeves',
+                        'sole_color',
                         'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
-        self.tree = ttkb.Treeview(top_frame,columns=self.columns,
-                                  height= tree_height,
+        self.tree = ttkb.Treeview(foot_wear_frame,columns=self.columns,
+                                  height=tree_height,
                                   bootstyle='dark',
                                  show='headings')
         self.tree.pack()
-        controls = ttkb.LabelFrame(top_frame,text='controls')
+        controls = ttkb.LabelFrame(foot_wear_frame,text='controls')
         controls.pack()
         remove_buttton =  ttkb.Button(controls,text='Remove',
                                           command = self.delete_from_cart,
@@ -53,9 +53,9 @@ class Top_Cart_Treeview:
             self.tree.heading(col,text=col)
             self.tree.column(col,width=74,anchor=CENTER)
             
-        Top_Cart_Treeview.add_to_cart = self.add_data
+        Foot_Wear_Cart_Treeview.add_to_cart = self.add_data
         
-        data = get_products('top')
+        data = get_products('foot_wear')
         self.add_data(data,True)
       
     def get_selected(self,e):
@@ -110,16 +110,16 @@ class Top_Cart_Treeview:
         self.updateCart(data,'remove')
         
     def updateCart(self,product=[],action='add'):
-        top_total = 0
+        foot_wear_total = 0
         ids = self.tree.get_children()
         for id in ids:
             values = self.tree.item(id,'values')
-            top_total += float(values[-2])
-        grand_total = update_cart('top',top_total,product,action)
+            foot_wear_total += float(values[-2])
+        grand_total = update_cart('foot_wear',foot_wear_total,product,action)
         self.grand_total.config(text=grand_total)
         
     def delete_all(self):
         for record in self.tree.get_children():
             self.tree.delete(record)
-        grand_total = update_cart('top',0,[],'update')
+        grand_total = update_cart('foot_wear',0,[],'update')
         self.grand_total.config(text=grand_total)
