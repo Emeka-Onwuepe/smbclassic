@@ -171,6 +171,7 @@ class Sales_Summary:
     def submit_data(self):
         credit_sales_id = read_json('state.json','credit_sales')
         logged = False
+        reset = True
         base = 'http://127.0.0.1:8000/api/'
 
         login_data = {"email":'pascalemy2010@gmail.com',
@@ -193,9 +194,10 @@ class Sales_Summary:
             if re.status_code == 200:
                 Sales.delete_sale(self.con,item['sales_id'])
                 self.add_sales()
+            else:
+                reset = False
             
         
-            # response = re.text
         for item in self.data['credit_sales']:
             url = base + 'process'
             data  = json.dumps(item)
@@ -204,6 +206,8 @@ class Sales_Summary:
                 credit_sales_id.pop(credit_sales_id.index(item['credit_sales_id']))
                 write_json(credit_sales_id,'state.json','credit_sales')
                 Credit_Sales.delete_credit_sale(self.con,item['credit_sales_id'])
+            else:
+                reset = False
                 
         for item in self.data['payments']:
             url = base + 'creditpayment'
@@ -214,17 +218,7 @@ class Sales_Summary:
                 Payment.delete_instance(self.con,data['id'])
                 self.add_payments()
                 
-        # remember to update credit_sale and item ids
-        
-        
-            
-
-# let response = await fetch(url, {
-#         method: 'POST', // or 'PUT'
-#         credentials: 'same-origin',
-#         headers: {,
-#             'Content-Type': 'application/json',
-#             'X-CSRFToken': token
-#         },
-#         body: JSON.stringify(data),
-#     })
+        if reset:
+            write_json(0,'state.json','sales_id')
+            write_json(0,'state.json','item_id')
+    
