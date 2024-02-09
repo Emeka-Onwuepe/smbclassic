@@ -12,12 +12,16 @@ from qurried.views.queried_foot_wears import Foot_Wear_Treeview
 from qurried.views.queried_products import Product_Treeview
 from qurried.views.queried_suits import Suit_Treeview
 from qurried.views.queried_tops import Top_Treeview
+from receipts.views.create_reciept import create_receipt
 from sales.view.sales import Sales_Detail
 from ttkbootstrap.scrolled import ScrolledFrame
 
 from sales.view.sales_summary import Sales_Summary
+from user.views.login import Login_View
+
 # from state import read_json
 
+create_receipt()
 querried = {'suit':[]}
 
 app = ttkb.Window(themename='superhero',)
@@ -32,16 +36,19 @@ app.title('SMBClassic Sale and Stock App')
 # main frame
 
 main_frame = ScrolledFrame(app,height=830,width=1400)
-main_frame.pack()
+
 nav = ttkb.Frame(main_frame)
-nav.pack()
+
 ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Credit Sales",command=lambda : creditSalePage()).pack(side=LEFT,padx=10,pady=10)
 wrapper = ttkb.Frame(main_frame)
 wrapper = ttkb.Frame(main_frame)
 
-wrapper.pack()
+def pack_main():
+    main_frame.pack()
+    nav.pack()
+    wrapper.pack()
 
 def summaryPage():
     
@@ -91,6 +98,13 @@ def mainPage():
                           product_tree)
     Sales_Detail(sales_frame,connection.con,[suit_cart,top_cart,foot_wear_cart,product_cart])
     
+def login_fun():
+    for fn in app.winfo_children():
+        if isinstance(fn,ttkb.Labelframe):
+            fn.destroy()
+    app.update()
+    pack_main()
+    mainPage()
     
-mainPage()
+Login_View(app,login_fun)
 app.mainloop()
