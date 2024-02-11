@@ -5,6 +5,7 @@ from ttkbootstrap.dialogs.dialogs import Messagebox
 from credit_sales.model import Credit_Sales
 
 from customer.models import Customer
+from receipts.views.create_reciept import create_receipt
 from sales.model import Items, Sales
 from state import manage_customer, proccess_sales, read_json, write_json 
 
@@ -130,8 +131,23 @@ class Sales_Detail:
         result = Messagebox.okcancel(txt)
         if result == 'Cancel':
             return
+        #  {
+        # 'items':[
+        #         {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
+        #          'price':10000,'qty':1,'total':10000
+        #           },
+        #          {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
+        #          'price':10000,'qty':1,'total':10000
+        #           }, 
+        #          {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
+        #          'price':10000,'qty':1,'total':10000
+        #           },
+        #            {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
+        #          'price':10000,'qty':1,'total':10000
+        #           },
+        #          ]
+        # }
         
-       
         
         customer = data['customer']
         if not customer['customer_id']:
@@ -163,6 +179,17 @@ class Sales_Detail:
         payment_method = self.payment_method.get().strip()
         sales_id += 1
         
+        receipt_data = {'branch_address':data['branch']['address'],
+                        'branch phone':data['branch']['phone_number'],
+                        'purchase_id': purchase_id,
+                        'total':total,
+                        'c_name':customer['name'],
+                        'c_phone':customer['phone_number'],
+                        'c_email':customer['email'],
+                        'c_address': customer['address'],
+                        'c_payment': payment_method,
+                         'items':[]}
+        
         success = True
         
         if payment_method == 'credit':
@@ -192,12 +219,17 @@ class Sales_Detail:
         if success:   
             sales.add_instance(self.con)
             for item in items:
+                receipt_data['items'].append(item)
                 item_id += 1
                 item = Items(*item.values(),item_id)
                 item.add_instance(self.con,sales_id,payment_method)
                 
             if payment_method == 'credit':
                 credit_sales_ids.append(sales.credit_sales_id)
+            
+            # generate receipt
+            if payment_method != 'credit':
+                create_receipt(receipt_data)
             
             # update credit_sales id list
             write_json(credit_sales_ids,'state.json','credit_sales')

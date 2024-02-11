@@ -12,7 +12,6 @@ from qurried.views.queried_foot_wears import Foot_Wear_Treeview
 from qurried.views.queried_products import Product_Treeview
 from qurried.views.queried_suits import Suit_Treeview
 from qurried.views.queried_tops import Top_Treeview
-from receipts.views.create_reciept import create_receipt
 from sales.view.sales import Sales_Detail
 from ttkbootstrap.scrolled import ScrolledFrame
 
@@ -21,7 +20,6 @@ from user.views.login import Login_View
 
 # from state import read_json
 
-create_receipt()
 querried = {'suit':[]}
 
 app = ttkb.Window(themename='superhero',)

@@ -1,6 +1,8 @@
 from xhtml2pdf import pisa
 import win32api
-import os 
+import os
+
+from state import read_json 
 
 data = {'branch_address':'Okeke Str',
         'branch phone':'08132180216',
@@ -27,6 +29,8 @@ data = {'branch_address':'Okeke Str',
         }
 
 def create_receipt(data = data):
+    cart = read_json('state.json','cart')
+    products = cart['products']
     store_details = f'''
     <div class="store_detail">
                  <table>
@@ -57,14 +61,24 @@ def create_receipt(data = data):
     items = ''
     index = 1
     for item in data['items']:
+        p_group = item['p_group']
+        product_id = f'{p_group}_id'
+        id = f'{item[product_id]}-{item["size_id"]}-{p_group}'
+        [product] = [product for product in products if product[-1] == id]
+        name = f'{product[-9]} {product[-8]}'.capitalize()
+        first_span = f"{product[0]} - {product[1]} - {product[2]} - {product[-7]} "
+        second_span = product[3:-9]
+        second_span = [i for i in second_span if i ]
+        second_span = ' - '.join(second_span)
         proto = f'''<tr>
                         <td>{index}</td>
-                        <td>{item['name'][0]}<br/>
-                        <span class='info'>{item['name'][1]}<span>
+                        <td class='item_details'>{name}<br/>
+                        <span class='info'>{first_span}</span><br/>
+                        <span class='info'>{second_span}</span>
                         </td>
-                        <td>{item['price']}</td>
+                        <td>{item['unit_price']}</td>
                         <td>{item['qty']}</td>
-                        <td>{item['total']}</td>
+                        <td>{item['total_price']}</td>
                     </tr>
                 '''
         items += proto
@@ -106,6 +120,7 @@ def create_receipt(data = data):
         .top{{margin-top: 10px;}}
         .key{{width:105px}}
         .value{{width:170px}}
+        .item_details{{line-height: 1.2}}
         
 
     </style>
@@ -157,7 +172,7 @@ def create_receipt(data = data):
                 <tfoot class='tfoot'>
                  <tr>
                  <td colspan=2 ><strong>Grand Total</strong></td>
-                 <td colspan=3><strong>2000000</strong></td>
+                 <td colspan=3><strong>{data['total']}</strong></td>
                  </tr>
                 </tfoot>
             </table>
@@ -179,5 +194,5 @@ def create_receipt(data = data):
     # win32api.ShellExecute(0,'print',path,None,'.',0)
     
     # return page
-# with open('reciept.html','w') as outfile:
-#     outfile.write(page)
+    with open('reciept.html','w') as outfile:
+        outfile.write(page)
