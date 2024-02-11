@@ -7,24 +7,37 @@ from cart.views.products_cart import Product_Cart_Treeview
 class Product_Treeview:
     def __init__(self,frame):
         self.frame = frame
-        product_frame = ttkb.LabelFrame(self.frame,width=1360,text='products')
-        product_frame.pack(pady=frame_pady)
+        self.product_frame = ttkb.LabelFrame(self.frame,width=1360,text='products')
+        self.product_frame.pack(pady=frame_pady)
         self.columns = ['type','brand','color','gender','age_group',
                         'product_type','category','price',
                         'size','pgroup','id'
                         ]
-        self.tree = ttkb.Treeview(product_frame,columns=self.columns,
+        self.tree = ttkb.Treeview(self.product_frame,columns=self.columns,
                                   height=queried_tree_height,
                                   bootstyle='dark',
                                  show='headings')
         self.tree.pack()
         
-        add_to_cart_button  =  ttkb.Button(frame,text='Add to Cart',
+        self.add_to_cart_button  =  ttkb.Button(frame,text='Add to Cart',
                                           command = self.add_to_cart,
-                                          bootstyle=SUCCESS).pack()
+                                          bootstyle=SUCCESS)
+        self.add_to_cart_button.pack()
+        
         for col in self.columns:
             self.tree.heading(col,text=col)
             self.tree.column(col,width=90,anchor=CENTER)
+            
+        self.toggle()
+            
+    def toggle(self):
+        items = self.tree.get_children()
+        if items:
+            self.product_frame.pack(pady=frame_pady)
+            self.add_to_cart_button.pack()
+        else:
+            self.product_frame.pack_forget()
+            self.add_to_cart_button.pack_forget()
     
     def add_to_cart(self):
         selected = []
@@ -40,4 +53,6 @@ class Product_Treeview:
             self.tree.delete(record)
         for item in data:
             self.tree.insert('',END,values=item,iid=item[-1])
+            
+        self.toggle()
             

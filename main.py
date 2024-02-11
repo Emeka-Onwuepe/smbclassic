@@ -41,7 +41,7 @@ ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack(side=LEFT,padx=10
 ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Credit Sales",command=lambda : creditSalePage()).pack(side=LEFT,padx=10,pady=10)
 wrapper = ttkb.Frame(main_frame)
-wrapper = ttkb.Frame(main_frame)
+# wrapper = ttkb.Frame(main_frame)
 
 def pack_main():
     main_frame.pack()

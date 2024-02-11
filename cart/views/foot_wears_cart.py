@@ -14,20 +14,20 @@ class Foot_Wear_Cart_Treeview:
     def __init__(self,frame,grand_total):
         self.frame = frame
         self.grand_total = grand_total
-        foot_wear_frame = ttkb.LabelFrame(self.frame,width=1360,text='Foot Wears Cart')
-        foot_wear_frame.pack(pady=frame_pady)
+        self.foot_wear_frame = ttkb.LabelFrame(self.frame,width=1360,text='Foot Wears Cart')
+        self.foot_wear_frame.pack(pady=frame_pady)
      
         self.columns = ['type','brand','color','gender','age_group',
                         'sole_color',
                         'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
-        self.tree = ttkb.Treeview(foot_wear_frame,columns=self.columns,
+        self.tree = ttkb.Treeview(self.foot_wear_frame,columns=self.columns,
                                   height=tree_height,
                                   bootstyle='dark',
                                  show='headings')
         self.tree.pack()
-        controls = ttkb.LabelFrame(foot_wear_frame,text='controls')
+        controls = ttkb.LabelFrame(self.foot_wear_frame,text='controls')
         controls.pack()
         remove_buttton =  ttkb.Button(controls,text='Remove',
                                           command = self.delete_from_cart,
@@ -57,6 +57,15 @@ class Foot_Wear_Cart_Treeview:
         
         data = get_products('foot_wear')
         self.add_data(data,True)
+        self.toggle()
+        
+        
+    def toggle(self):
+        items = self.tree.get_children()
+        if items:
+            self.foot_wear_frame.pack(pady=frame_pady)
+        else:
+            self.foot_wear_frame.pack_forget()
       
     def get_selected(self,e):
         id = self.tree.focus()
@@ -77,6 +86,7 @@ class Foot_Wear_Cart_Treeview:
                 refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
         self.updateCart(refined)
+        self.toggle()
         if not from_state and refined:
             txt = 'Product(s) added'
             Messagebox.ok(txt)
@@ -108,6 +118,7 @@ class Foot_Wear_Cart_Treeview:
         self.qty_value.set(0)
         self.price_value.set(0)
         self.updateCart(data,'remove')
+        self.toggle()
         
     def updateCart(self,product=[],action='add'):
         foot_wear_total = 0
@@ -123,3 +134,4 @@ class Foot_Wear_Cart_Treeview:
             self.tree.delete(record)
         grand_total = update_cart('foot_wear',0,[],'update')
         self.grand_total.config(text=grand_total)
+        self.toggle()

@@ -14,19 +14,19 @@ class Product_Cart_Treeview:
     def __init__(self,frame,grand_total):
         self.frame = frame
         self.grand_total = grand_total
-        product_frame = ttkb.LabelFrame(self.frame,width=1360,text='Products Cart')
-        product_frame.pack(pady=frame_pady)
+        self.product_frame = ttkb.LabelFrame(self.frame,width=1360,text='Products Cart')
+        self.product_frame.pack(pady=frame_pady)
      
         self.columns = ['type','brand','color','gender','age_group',
                         'product_type','category','size','mini_price','pgroup',
                         'price','qty','total','id'
                         ]
-        self.tree = ttkb.Treeview(product_frame,columns=self.columns,
+        self.tree = ttkb.Treeview(self.product_frame,columns=self.columns,
                                   height = tree_height,
                                   bootstyle='dark',
                                  show='headings')
         self.tree.pack()
-        controls = ttkb.LabelFrame(product_frame,text='controls')
+        controls = ttkb.LabelFrame(self.product_frame,text='controls')
         controls.pack()
         remove_buttton =  ttkb.Button(controls,text='Remove',
                                           command = self.delete_from_cart,
@@ -56,6 +56,15 @@ class Product_Cart_Treeview:
         
         data = get_products('product')
         self.add_data(data,True)
+
+        self.toggle()
+        
+    def toggle(self):
+        items = self.tree.get_children()
+        if items:
+            self.product_frame.pack(pady=frame_pady)
+        else:
+            self.product_frame.pack_forget()
       
     def get_selected(self,e):
         id = self.tree.focus()
@@ -76,6 +85,7 @@ class Product_Cart_Treeview:
                 refined.append(item)
             self.tree.insert('',END,values=item,iid=item[-1])
         self.updateCart(refined)
+        self.toggle()
         if not from_state and refined:
             txt = 'Product(s) added'
             Messagebox.ok(txt)
@@ -107,6 +117,7 @@ class Product_Cart_Treeview:
         self.qty_value.set(0)
         self.price_value.set(0)
         self.updateCart(data,'remove')
+        self.toggle()
         
     def updateCart(self,product=[],action='add'):
         product_total = 0
@@ -122,3 +133,4 @@ class Product_Cart_Treeview:
             self.tree.delete(record)
         grand_total = update_cart('product',0,[],'update')
         self.grand_total.config(text=grand_total)
+        self.toggle()
