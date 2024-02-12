@@ -186,7 +186,17 @@ def create_receipt(data = data):
     page = page.strip()
     
     name = f"{data['purchase_id']}.pdf"
-    path = os.path.abspath(f'./receipts/pdfs/{name}')
+    
+    receipts_base = os.path.abspath(f'./receipts/pdfs')
+    
+    # delete all previous reciepts
+    for pdf in os.listdir(receipts_base):
+        file  = os.path.join(receipts_base,pdf)
+        os.remove(file)
+        
+    # reciept path
+    path = os.path.join(receipts_base,name)
+    
     
     with open(path,'w+b') as outfile:
         pisa.CreatePDF(page,dest=outfile) 
@@ -194,5 +204,5 @@ def create_receipt(data = data):
     # win32api.ShellExecute(0,'print',path,None,'.',0)
     
     # return page
-    with open('reciept.html','w') as outfile:
-        outfile.write(page)
+    # with open('reciept.html','w') as outfile:
+    #     outfile.write(page)
