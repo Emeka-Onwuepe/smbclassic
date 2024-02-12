@@ -24,12 +24,18 @@ class Category:
                        name VARCHAR(100), category_id INTEGER(20))
                        ''')
         
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         category = self.get_instance(cursor,self.name)
         if not category:
             cursor.execute('''INSERT INTO category 
                           VALUES(@name,@category_id)''',self.__dict__)
+        elif update:
+            cursor.execute('''UPDATE category 
+                             SET name = @name, category_id = @category_id 
+                             WHERE name = @name
+                             ''',self.__dict__)
+            
         con.commit()
     
     
@@ -70,12 +76,19 @@ class Product_Type:
                        )
                        ''')
         
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         product_type = self.get_instance(cursor,self.name)
         if not product_type:
             cursor.execute('''INSERT INTO product_type 
                           VALUES(@name,@category_id,@p_group,@product_type_id)''',self.__dict__)
+        elif update:
+            cursor.execute('''UPDATE product_type 
+                           SET name = @name,category_id = @category_id,
+                           p_group = @p_group,product_type_id = @product_type_id
+                           WHERE name = @name
+                           ''',self.__dict__)
+            
         con.commit()
     
     
@@ -122,14 +135,21 @@ class Size:
                        )
                        ''')
         
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         size = self.get_instance(cursor,self.size_id)
-        print(size)
         if not size:
             cursor.execute('''INSERT INTO size 
                           VALUES(@size,@product_type_id,@age_group,
                           @gender,@price,@size_id)''',self.__dict__)
+        elif update:
+            cursor.execute('''UPDATE size 
+                          SET size = @size,product_type_id = @product_type_id,
+                          age_group = @age_group, gender = @gender,
+                          price = @price,size_id = @size_id
+                          WHERE size_id = @size_id
+                          ''',self.__dict__)
+            
         con.commit()
     
     
@@ -156,6 +176,9 @@ class Product_Class:
                 'gender VARCHAR(10),age_group VARCHAR(10), ')
     
     add_str = ('@type,@brand,@description,@color,@gender,@age_group, ')
+    
+    update_str = ('''type = @type,brand = @brand,description = @description,
+                  color = @color,gender = @gender,age_group = @age_group, ''')
     
     @staticmethod
     def get_product(cursor,pgroup,data): 
@@ -235,16 +258,23 @@ class Product(Product_Class):
                        )
                        ''')
     
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         product = self.get_instance(cursor,self.product_id)
         if not product:
             cursor.execute(f'''INSERT INTO product 
                           VALUES({Product_Class.add_str}
                               @product_type_id,@product_id)''',self.__dict__)
+        elif update:
+            cursor.execute(f'''UPDATE product 
+                           SET {Product_Class.update_str}
+                              product_type_id = @product_type_id,
+                              product_id = @product_id
+                              WHERE product_id = @product_id''',self.__dict__)
+            
         con.commit()
         
-    def add_m2m(self,con,size_id):
+    def add_m2m(self,con,size_id,update=False):
         cursor = con.cursor()
         m2m = cursor.execute('''SELECT * FROM product_sizes
                                      WHERE product_id = @product_id
@@ -256,6 +286,14 @@ class Product(Product_Class):
             cursor.execute(f'''INSERT INTO product_sizes 
                           VALUES(@product_id,@size_id)''',{'product_id':self.product_id,
                                         'size_id':size_id})
+        elif update:
+             cursor.execute(f'''UPDATE product_sizes 
+                            SET product_id = @product_id,
+                            size_id = @size_id
+                            WHERE product_id = @product_id
+                                     and size_id = @size_id''',{'product_id':self.product_id,
+                                        'size_id':size_id})
+            
         con.commit()        
     
         
@@ -315,7 +353,7 @@ class Suit(Product_Class):
                        )
                        ''')
     
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         size = self.get_instance(cursor,self.suit_id)
         if not size:
@@ -325,9 +363,19 @@ class Suit(Product_Class):
                               @breasted,@button,@pics,
                               @golden_button,
                               @suit_id)''',self.__dict__)
+        elif update:
+            cursor.execute(f'''UPDATE suit 
+                            SET {Product_Class.update_str}
+                              product_type_id = @product_type_id,
+                              breasted = @breasted,button = @button,
+                              pics = @pics,golden_button = @golden_button,
+                              suit_id = @suit_id
+                              WHERE suit_id = @suit_id
+                              ''',self.__dict__)
+            
         con.commit() 
     
-    def add_m2m(self,con,size_id):
+    def add_m2m(self,con,size_id,update=False):
         cursor = con.cursor()
         m2m = cursor.execute('''SELECT * FROM suit_sizes
                                      WHERE suit_id = @suit_id
@@ -339,6 +387,14 @@ class Suit(Product_Class):
             cursor.execute(f'''INSERT INTO suit_sizes 
                           VALUES(@suit_id,@size_id)''',{'suit_id':self.suit_id,
                                         'size_id':size_id})
+        elif update:
+            cursor.execute(f'''UPDATE suit_sizes 
+                            SET suit_id = @suit_id,size_id = @size_id
+                            WHERE suit_id = @suit_id
+                                     and size_id = @size_id
+                            ''',{'suit_id':self.suit_id,
+                                        'size_id':size_id})
+            
         con.commit()        
     
    
@@ -390,7 +446,7 @@ class Top(Product_Class):
                        )
                        ''')
     
-    def add_instance(self,con):
+    def add_instance(self,con,update):
         cursor = con.cursor()
         top = self.get_instance(cursor,self.top_id)
         if not top:
@@ -399,9 +455,17 @@ class Top(Product_Class):
                               @product_type_id,
                               @sleeves,
                               @top_id)''',self.__dict__)
+        elif update:
+            cursor.execute(f'''UPDATE top 
+                             SET {Product_Class.update_str}
+                              product_type_id = @product_type_id,
+                              sleeves = @sleeves,
+                              top_id = @top_id
+                              WHERE top_id = @top_id''',self.__dict__)
+            
         con.commit()   
         
-    def add_m2m(self,con,size_id):
+    def add_m2m(self,con,size_id,update=False):
             cursor = con.cursor()
             m2m = cursor.execute('''SELECT * FROM top_sizes
                                         WHERE top_id = @top_id
@@ -412,6 +476,13 @@ class Top(Product_Class):
             if not m2m:
                 cursor.execute(f'''INSERT INTO top_sizes 
                             VALUES(@top_id,@size_id)''',{'top_id':self.top_id,
+                                                            'size_id':size_id})
+            elif update:
+                cursor.execute(f'''UPDATE top_sizes 
+                             SET top_id = @top_id,size_id = @size_id
+                             WHERE top_id = @top_id
+                                        and size_id = @size_id
+                             ''',{'top_id':self.top_id,
                                                             'size_id':size_id})
             con.commit()       
 
@@ -463,7 +534,7 @@ class Foot_Wear(Product_Class):
                        )
                        ''')
     
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         foot_wear = self.get_instance(cursor,self.foot_wear_id)
         if not foot_wear:
@@ -472,9 +543,18 @@ class Foot_Wear(Product_Class):
                               @product_type_id,
                               @sole_color,
                               @foot_wear_id)''',self.__dict__)
+        elif update:
+            cursor.execute(f'''UPDATE foot_wear 
+                             SET {Product_Class.update_str}
+                              product_type_id = @product_type_id,
+                              sole_color = @sole_color,
+                              foot_wear_id = @foot_wear_id
+                              WHERE foot_wear_id = @foot_wear_id
+                              ''',self.__dict__)
+            
         con.commit()  
         
-    def add_m2m(self,con,size_id):
+    def add_m2m(self,con,size_id,update=False):
         cursor = con.cursor()
         m2m = cursor.execute('''SELECT * FROM foot_wear_sizes
                                         WHERE foot_wear_id = @foot_wear_id
@@ -485,5 +565,12 @@ class Foot_Wear(Product_Class):
         if not m2m:
             cursor.execute(f'''INSERT INTO foot_wear_sizes 
                             VALUES(@foot_wear_id,@size_id)''',{'foot_wear_id':self.foot_wear_id,
+                                                                'size_id':size_id})
+        elif update:
+            cursor.execute(f'''UPDATE foot_wear_sizes 
+                            SET foot_wear_id = @foot_wear_id,
+                            size_id = @size_id
+                            WHERE foot_wear_id = @foot_wear_id
+                                        and size_id = @size_id''',{'foot_wear_id':self.foot_wear_id,
                                                                 'size_id':size_id})
         con.commit()   

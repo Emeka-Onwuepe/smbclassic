@@ -17,7 +17,7 @@ from ttkbootstrap.scrolled import ScrolledFrame
 
 from sales.view.sales_summary import Sales_Summary
 from user.views.login import Login_View
-
+from ttkbootstrap.dialogs.dialogs import Messagebox
 # from state import read_json
 
 querried = {'suit':[]}
@@ -33,6 +33,16 @@ app.title('SMBClassic Sale and Stock App')
 
 # main frame
 
+def getData():
+    Messagebox.ok("Please make sure that you are online")
+    status = connection.get_data()
+    if status:
+        Messagebox.ok("Successfully pulled data")
+    else:
+        Messagebox.ok("An Error Occurred while pulling data from Server")
+        
+    
+
 main_frame = ScrolledFrame(app,height=830,width=1400)
 
 nav = ttkb.Frame(main_frame)
@@ -40,6 +50,7 @@ nav = ttkb.Frame(main_frame)
 ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Credit Sales",command=lambda : creditSalePage()).pack(side=LEFT,padx=10,pady=10)
+ttkb.Button(nav,text="Get Data",command=lambda : getData()).pack(side=LEFT,padx=10,pady=10)
 wrapper = ttkb.Frame(main_frame)
 # wrapper = ttkb.Frame(main_frame)
 

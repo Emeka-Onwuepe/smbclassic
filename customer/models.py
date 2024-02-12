@@ -45,7 +45,7 @@ class Customer:
                        customer_id INTEGER(20))
                        ''')
         
-    def add_instance(self,con):
+    def add_instance(self,con,update=False):
         cursor = con.cursor()
         customer = self.get_instance(cursor,self.phone_number)
         
@@ -53,6 +53,14 @@ class Customer:
             cursor.execute('''INSERT INTO customer 
                           VALUES(@name,@phone_number,@email,@address,
                            @total_credit,@total_payment,@balance,@customer_id)''',self.__dict__)
+        elif update:
+            cursor.execute('''UPDATE customer 
+                            SET name = @name, phone_number = @phone_number,email =@email,
+                            address = @address, total_credit = @total_credit,
+                            total_payment = @total_payment,balance = @balance,
+                            customer_id = @customer_id
+                            WHERE phone_number = @phone_number''',self.__dict__)
+            
         else:
             return customer
         con.commit()

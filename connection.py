@@ -16,6 +16,7 @@ models = [Customer,Category,Product_Type,Size,
           Product,Suit,Top,Foot_Wear,Items,
           Sales,Credit_Sales,Payment
           ]
+# create tables
 for model in models:
     model.create_table(cur)
     
@@ -31,48 +32,49 @@ models = {'category':Category,
 
 base = 'http://127.0.0.1:8000/'
 
+# get data one
+def get_data():
+    try:
+        for key,model_ in  models.items():
+            url = f'{base}api/getall?model={key}'
 
-
-try:
-    for key,model_ in  models.items():
-        url = f'{base}api/getall?model={key}'
-
-        re = requests.get(url)
-        m2m = []
-        data = re.json()
-        for item in data['data']:
-        
-            item[f'{key}_id'] = item.pop('id')
-            if key == 'product_type':
-                item['category_id'] = item.pop('category')
-            elif key == 'size':
-                item['product_type_id'] = item.pop('product_type')
-            elif key in ['product','suit','top','foot_wear']:
-                item['product_type_id'] = item.pop('product_type')
-                # for size in item['sizes']:  
-                m2m = item.pop('sizes')
-                
-            instance  = model_(**item)
-            instance.add_instance(con)
+            re = requests.get(url)
+            m2m = []
+            data = re.json()
+            for item in data['data']:
             
-            for size_id in m2m:
-                instance.add_m2m(con,size_id)
-    if type(branch['id']) == str:
-        url = f'{base}api/getbranch?name={branch["name"]}'
-        re = requests.get(url)
-        data = re.json()
-        branch['id'] = data['id']
-        write_json(branch,'state.json','branch')
-        
-except requests.exceptions.ConnectionError:
-    print('error')
+                item[f'{key}_id'] = item.pop('id')
+                if key == 'product_type':
+                    item['category_id'] = item.pop('category')
+                elif key == 'size':
+                    item['product_type_id'] = item.pop('product_type')
+                elif key in ['product','suit','top','foot_wear']:
+                    item['product_type_id'] = item.pop('product_type')
+                    m2m = item.pop('sizes')
+                    
+                if key in ['product','suit','top','foot_wear']:
+                    # delete non returned products
+                    pass
+                    if m2m:
+                        pass
+                    # delete non returned size ids
+               
+                   
+                instance  = model_(**item)
+                instance.add_instance(con,update=True)
+                
+
+                
+                for size_id in m2m:
+                    instance.add_m2m(con,size_id,update=True)
+        if type(branch['id']) == str:
+            url = f'{base}api/getbranch?name={branch["name"]}'
+            re = requests.get(url)
+            data = re.json()
+            branch['id'] = data['id']
+            write_json(branch,'state.json','branch')
+            
+    except requests.exceptions.ConnectionError:
+        return 0
+    return 1
     
-
-# try:
-#     Customer.create_table(cur)
-# except sqlite3.OperationalError as e:
-#     print(e)
-
-
-# con.close()
-
