@@ -194,12 +194,12 @@ class Product_Class:
                 ON {pgroup}_sizes.{pgroup}_id = product.{pgroup}_id
                 JOIN category
                 ON category.category_id = product_type.category_id
-                WHERE product.type = @type and
-                product.brand = @brand  and
-                product.color = @color and
-                product.gender = @gender and
-                product.age_group = @age_group and
-                product_type.name = @product_type) as products
+                WHERE LOWER(product.type) = @type and
+                LOWER(product.brand) = @brand  and
+                LOWER(product.color) = @color and
+                LOWER(product.gender) = @gender and
+                LOWER(product.age_group) = @age_group and
+                LOWER(product_type.name) = @product_type) as products
                 JOIN size
                 ON size.size_id = products.size_id
                                    ''',data)
@@ -209,7 +209,7 @@ class Product_Class:
             
             product = product
         else:
-            product = None
+            product = []
         return product
                       
 

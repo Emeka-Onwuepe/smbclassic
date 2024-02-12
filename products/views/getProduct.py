@@ -73,12 +73,10 @@ class GetProductForm:
                                           bootstyle=SUCCESS).grid(row=8,column=0,columnspan=2,pady=5,padx=5)
  
     def get_product(self):
-        data = {'type':self.type.get().strip(),'brand':self.brand.get().strip(),
-                'color':self.color.get().strip(),'gender':self.gender.get().strip(),
-                'age_group':self.age_group.get().strip(),'product_type':self.product_type.get().strip()}
-        data = {'type': 'normal', 'brand': 'GB', 'color': 'red', 'gender': 'U', 'age_group': 'A', 'product_type': 'First Turkish'}
-        pgroup = self.pgroup.get().strip()
-        pgroup = 'foot_wear'
+        data = {'type':self.type.get().strip().lower(),'brand':self.brand.get().strip().lower(),
+                'color':self.color.get().strip().lower(),'gender':self.gender.get().strip().lower(),
+                'age_group':self.age_group.get().strip().lower(),'product_type':self.product_type.get().strip().lower()}
+        pgroup = self.pgroup.get().strip().lower()
         products = Product_Class.get_product(self.cursor,pgroup,data)
         
         need_data = []
