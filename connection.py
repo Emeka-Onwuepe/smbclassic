@@ -1,5 +1,6 @@
 import sqlite3
 import requests
+from clean_up_db import clean_up_database
 from credit_sales.model import Credit_Sales, Payment
 from state import read_json, write_json
 branch = read_json('state.json','branch')
@@ -35,6 +36,15 @@ base = 'http://127.0.0.1:8000/'
 # get data one
 def get_data():
     try:
+        returned_ids = {'category':[],
+                        'product_type':[],
+                        'size':[],
+                        'product':[],
+                        'suit':[],
+                        'top':[],
+                        'foot_wear':[]
+                        }
+        
         for key,model_ in  models.items():
             url = f'{base}api/getall?model={key}'
 
@@ -42,8 +52,10 @@ def get_data():
             m2m = []
             data = re.json()
             for item in data['data']:
-            
+                if key != 'customer':
+                    returned_ids[key].append(item['id'])
                 item[f'{key}_id'] = item.pop('id')
+                
                 if key == 'product_type':
                     item['category_id'] = item.pop('category')
                 elif key == 'size':
@@ -67,6 +79,11 @@ def get_data():
                 
                 for size_id in m2m:
                     instance.add_m2m(con,size_id,update=True)
+        # clean the database
+        for key,value in returned_ids.items():
+            if value:
+                clean_up_database(key,value)
+        
         if type(branch['id']) == str:
             url = f'{base}api/getbranch?name={branch["name"]}'
             re = requests.get(url)
