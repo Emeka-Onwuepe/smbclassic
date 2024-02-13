@@ -30,7 +30,6 @@ class GetProductForm:
                  top_tree,foot_wear_tree,
                  product_tree,
                  *args, **kwargs):
-        # frame = ttkb.Frame(app,borderwidth=10,style='light')
         frame.grid(row=0,column=0,pady=10,padx=5)
         self.cursor = cursor
         

@@ -173,9 +173,22 @@ class Sales_Summary:
         logged = False
         reset = True
         base = 'http://127.0.0.1:8000/api/'
+        
+        data_available = False
+        
+        for key,value in self.data.items():
+            if len(value) > 0:
+                data_available = True
 
-        login_data = {"email":'pascalemy2010@gmail.com',
-                      'password':'casdonmystery1959'}
+        if not data_available:
+            self.email.delete(0,END)
+            self.password.delete(0,END)
+            Messagebox.ok('No data to send')
+            return
+        
+        login_data = {"email":self.email.get().strip(),
+                      'password':self.password.get().strip()}
+        
         url = base + 'login'
         login_data = json.dumps(login_data)
         headers= { 'Content-Type': 'application/json'}
@@ -184,9 +197,15 @@ class Sales_Summary:
             logged =True
             user = login.json()
             headers['Authorization'] = f"Token {user['token']}"
+            
+        self.email.delete(0,END)
+        self.password.delete(0,END)
         
         if not logged:
+            Messagebox.ok('Access Denied')
             return
+       
+        
         for item in self.data['sales']:
             url = base + 'process'
             data  = json.dumps(item)

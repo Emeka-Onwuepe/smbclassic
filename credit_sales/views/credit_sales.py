@@ -18,7 +18,6 @@ class Credit_Sales_Detail:
         self.frame = frame
         self.con = con
         self.cursor = self.con.cursor()
-        self.customer_phone_number = None
         self.phone_string = ttkb.StringVar()
         self.amount_string = ttkb.DoubleVar()
         self.edit_amount_string = ttkb.DoubleVar()
@@ -112,9 +111,12 @@ class Credit_Sales_Detail:
         
          
     def get_customer(self,from_class=False):
-       credit_sales = Credit_Sales.get_customer_credits(self.cursor,'08132180216')
-       self.customer_phone_number = '08132180216'
-       payments = Payment.get_instance(self.cursor,'08132180216',True)
+       phone_number = self.phone_string.get().strip()
+       credit_sales = Credit_Sales.get_customer_credits(self.cursor,phone_number)
+       if not credit_sales:
+           Messagebox.ok('No record found')
+           
+       payments = Payment.get_instance(self.cursor,phone_number,True)
        data = []
        for credit in credit_sales:
            needed = [credit.purchase_id,credit.total_amount,credit.total_payment,

@@ -131,22 +131,6 @@ class Sales_Detail:
         result = Messagebox.okcancel(txt)
         if result == 'Cancel':
             return
-        #  {
-        # 'items':[
-        #         {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
-        #          'price':10000,'qty':1,'total':10000
-        #           },
-        #          {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
-        #          'price':10000,'qty':1,'total':10000
-        #           }, 
-        #          {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
-        #          'price':10000,'qty':1,'total':10000
-        #           },
-        #            {'name':["First Turkish Suit","pdpdp - sksks - sskks - sjsjssj - sjsjs - ssjj - ksksk"],
-        #          'price':10000,'qty':1,'total':10000
-        #           },
-        #          ]
-        # }
         
         
         customer = data['customer']
