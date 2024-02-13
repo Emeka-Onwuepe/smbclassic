@@ -3,19 +3,14 @@ import ttkbootstrap as ttkb
 from ttkbootstrap.constants import *
 from products.model import Product_Class
 from qurried.models import (Querried_Foot_Wear, Querried_Product, 
-                            Querried_Product_Class, Querried_Suit, 
+                            Querried_Suit, 
                             Querried_Top)
 from ttkbootstrap.dialogs.dialogs import Messagebox
-from state import read_json, write_json
+from state import read_json
 pgroup_ = read_json('state.json','pgroup')
 gender_ = read_json('state.json','gender')
 age_group_ = read_json('state.json','age_group')
-import json
 
-
-# <input type="text" name="type" id="type" required>
-# <label for="color">Color</label>
-# <input type="text" name="color" id="color" required>
 
 models = {
           'product':Querried_Product,
