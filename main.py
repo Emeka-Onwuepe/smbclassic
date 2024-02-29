@@ -35,7 +35,7 @@ app.title('SMBClassic Sale and Stock App')
 
 def getData():
     check = Messagebox.okcancel('Are you sure you want to update your data?')
-    if check == 'Cancel':
+    if check != 'OK':
         return
     
     Messagebox.ok("Please make sure that you are online")

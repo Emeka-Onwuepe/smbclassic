@@ -47,7 +47,7 @@ def get_data():
         
         for key,model_ in  models.items():
             url = f'{base}api/getall?model={key}'
-
+                   
             re = requests.get(url)
             m2m = []
             data = re.json()

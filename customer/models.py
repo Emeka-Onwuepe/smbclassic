@@ -50,10 +50,13 @@ class Customer:
         customer = self.get_instance(cursor,self.phone_number)
         
         if not customer:
+            if self.customer_id == 0:
+                self.set_id(cursor)
             cursor.execute('''INSERT INTO customer 
                           VALUES(@name,@phone_number,@email,@address,
                            @total_credit,@total_payment,@balance,@customer_id)''',self.__dict__)
         elif update:
+            self.customer_id = customer.customer_id
             cursor.execute('''UPDATE customer 
                             SET name = @name, phone_number = @phone_number,email =@email,
                             address = @address, total_credit = @total_credit,
@@ -63,7 +66,8 @@ class Customer:
             
         else:
             return customer
-        con.commit()
+        if update or not customer:
+            con.commit()
         return False
     
     

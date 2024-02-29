@@ -133,20 +133,17 @@ class Sales_Detail:
             return
         
         
-        customer = data['customer']
-        if not customer['customer_id']:
-            name = self.name_string.get().strip()
-            phone_number = self.phone_number_string.get().strip()
-            email = self.email_string.get().strip()
-            address = self.address_string.get().strip()
-            customer = Customer(name,phone_number,email,address)
-            customer.set_id(self.cursor)
-            check = customer.add_instance(self.con)
-            if check:
-                customer = check.__dict__
-            else:
-                customer = customer.__dict__
-            manage_customer('add',customer) 
+        # customer = data['customer']
+        # if not customer['customer_id']:
+        name = self.name_string.get().strip()
+        phone_number = self.phone_number_string.get().strip()
+        email = self.email_string.get().strip()
+        address = self.address_string.get().strip()
+        customer = Customer(name,phone_number,email,address)
+        
+        customer.add_instance(self.con,update=True)
+        customer = customer.__dict__
+        manage_customer('add',customer) 
             
         items = data['items']
         total = data['total']
