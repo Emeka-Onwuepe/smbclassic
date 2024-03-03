@@ -6,7 +6,7 @@ from credit_sales.model import Credit_Sales, Payment
 
 from customer.models import Customer
 from sales.model import Items, Sales
-from state import manage_customer, proccess_sales, read_json, write_json 
+from state import manage_customer, proccess_sales, read_json, write_json ,api_base
 import json
 import requests
 
@@ -172,7 +172,7 @@ class Sales_Summary:
         credit_sales_id = read_json('state.json','credit_sales')
         logged = False
         reset = True
-        base = 'http://127.0.0.1:8000/api/'
+        base = api_base
         
         data_available = False
         
@@ -192,7 +192,11 @@ class Sales_Summary:
         url = base + 'login'
         login_data = json.dumps(login_data)
         headers= { 'Content-Type': 'application/json'}
-        login = requests.post(url,data=login_data,headers=headers)
+        login = None
+        try:
+            login = requests.post(url,data=login_data,headers=headers)
+        except requests.exceptions.ConnectionError:
+            Messagebox.ok('Connection error')
         if login.status_code == 200:
             logged =True
             user = login.json()

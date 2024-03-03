@@ -2,6 +2,7 @@ import json
 
 
 base = '.'
+api_base = 'http://127.0.0.1:8000/api/'
 
 def get_location(name):
     return f"{base}/{name}"
@@ -153,4 +154,13 @@ def proccess_sales(action='get'):
         
         return data
         
-        
+def df_to_list(df):
+    data_list = df.head().values.tolist()
+    col = df.columns
+    data_list_ = []
+    for data in data_list:
+        dic = {}
+        for i in range(len(col)):
+            dic[col[i]] = data[i]
+            data_list_.append(dic)
+    return data_list_

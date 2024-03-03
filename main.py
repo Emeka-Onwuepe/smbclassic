@@ -16,6 +16,7 @@ from sales.view.sales import Sales_Detail
 from ttkbootstrap.scrolled import ScrolledFrame
 
 from sales.view.sales_summary import Sales_Summary
+from upload.view.uploads import Upload_page
 from user.views.login import Login_View
 from ttkbootstrap.dialogs.dialogs import Messagebox
 # from state import read_json
@@ -55,6 +56,7 @@ ttkb.Button(nav,text="Sales",command=lambda : mainPage()).pack(side=LEFT,padx=10
 ttkb.Button(nav,text="Sales Summary",command=lambda : summaryPage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Credit Sales",command=lambda : creditSalePage()).pack(side=LEFT,padx=10,pady=10)
 ttkb.Button(nav,text="Get Data",command=lambda : getData()).pack(side=LEFT,padx=10,pady=10)
+ttkb.Button(nav,text="Upload Data",command=lambda : uploadPage()).pack(side=LEFT,padx=10,pady=10)
 wrapper = ttkb.Frame(main_frame)
 # wrapper = ttkb.Frame(main_frame)
 
@@ -69,6 +71,13 @@ def summaryPage():
         fn.destroy()
     app.update()
     Sales_Summary(wrapper,connection.con)  
+    
+def uploadPage():
+    
+    for fn in wrapper.winfo_children():
+        fn.destroy()
+    app.update()
+    Upload_page(wrapper) 
     
 
 def creditSalePage():

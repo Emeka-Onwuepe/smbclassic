@@ -18,6 +18,13 @@ class Category:
             category = None
         return category
     
+    @classmethod
+    def get_instances(cls,cursor): 
+    
+        category = cursor.execute('''SELECT name FROM category ''')
+        category = category.fetchall()
+        return category
+    
     @staticmethod
     def create_table(cursor):
         cursor.execute('''CREATE TABLE IF NOT EXISTS category(
