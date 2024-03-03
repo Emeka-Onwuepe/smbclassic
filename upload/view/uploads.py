@@ -101,12 +101,11 @@ class Upload_page:
              
         json_data = {'data':df_to_list(data),
                     }
-        json_data = json.dumps(json_data)
+        
         # send data
-                    #  'branch': self.branch.get().strip(),
         if self.action.get().strip() == 'Add Product':
             url = base + 'addproduct'
-            data  = json_data
+            data  = json_data = json.dumps(json_data)
             re = requests.post(url,data,headers=headers)
             if re.status_code == 200:
                 Messagebox.ok(re.json()['status'])
@@ -114,7 +113,14 @@ class Upload_page:
                 print(re.text)
                 
         if self.action.get().strip() == 'Add Stock':
-            pass
+            url = base + 'addstock'
+            json_data['branch'] = self.branch.get().strip()
+            data  = json_data = json.dumps(json_data)
+            re = requests.post(url,data,headers=headers)
+            if re.status_code == 200:
+                Messagebox.ok(re.json()['status'])
+            else:
+                print(re.text)
             
         
         self.email.delete(0,END)
